@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7D7D1D1F-FD63-4F43-BBA6-97476B4EDBB4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{86385878-F59A-4DA0-BBA1-2EF0FDA6F07E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProxyMiner", "src\ProxyMiner\ProxyMiner.csproj", "{BA1D2243-0952-4CFE-8E5F-0B288BC79F0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProxyMiner.Demo", "demo\ProxyMiner.Demo\ProxyMiner.Demo.csproj", "{C861BB2B-671E-46D1-A5A4-4BA5922F35F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA1D2243-0952-4CFE-8E5F-0B288BC79F0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA1D2243-0952-4CFE-8E5F-0B288BC79F0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA1D2243-0952-4CFE-8E5F-0B288BC79F0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA1D2243-0952-4CFE-8E5F-0B288BC79F0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C861BB2B-671E-46D1-A5A4-4BA5922F35F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C861BB2B-671E-46D1-A5A4-4BA5922F35F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C861BB2B-671E-46D1-A5A4-4BA5922F35F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C861BB2B-671E-46D1-A5A4-4BA5922F35F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BA1D2243-0952-4CFE-8E5F-0B288BC79F0E} = {7D7D1D1F-FD63-4F43-BBA6-97476B4EDBB4}
+		{C861BB2B-671E-46D1-A5A4-4BA5922F35F6} = {86385878-F59A-4DA0-BBA1-2EF0FDA6F07E}
+	EndGlobalSection
+EndGlobal
