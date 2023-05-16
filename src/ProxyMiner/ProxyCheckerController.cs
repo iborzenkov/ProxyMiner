@@ -92,6 +92,6 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
     private readonly Timer _timer;
     private readonly ConcurrentDictionary<Proxy,bool> _inProgress = new();
     private readonly List<Proxy> _highPriority = new();
-    
+
     private const int TimerIntervalMilliseconds = 3000;
 }

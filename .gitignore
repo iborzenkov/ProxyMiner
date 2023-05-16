@@ -3,3 +3,6 @@
 /src/ProxyMiner/bin
 /src/ProxyMiner/obj
 /.idea
+/tests/ProxyMiner.Test/obj
+/tests/ProxyMiner.Test/bin
+/ProxyMiner.sln.DotSettings.user

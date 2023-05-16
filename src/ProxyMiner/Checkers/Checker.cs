@@ -48,7 +48,7 @@ public sealed class Checker : IChecker
                 AlwaysAvailableResourceUrl, HttpCompletionOption.ResponseHeadersRead, token);
             return response.StatusCode;
         }
-        catch (TaskCanceledException ex)
+        catch (TaskCanceledException)
         {
             throw;
         }
@@ -65,11 +65,11 @@ public sealed class Checker : IChecker
 
             return ex.StatusCode ?? HttpStatusCode.BadRequest;
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
             return HttpStatusCode.RequestTimeout;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return HttpStatusCode.BadRequest;
         }
