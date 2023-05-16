@@ -28,11 +28,26 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
         _timer.Dispose();
     }
 
-    public void CheckNow(IEnumerable<Proxy> proxies) => _highPriority.AddRange(proxies);
+    public void CheckNow(IEnumerable<Proxy> proxies)
+    {
+        lock (_locker)
+        {
+            var collection = proxies.ToList();
+
+            _highPriority.AddRange(collection.Except(_highPriority));
+            _blocked.RemoveAll(proxy => collection.Contains(proxy));
+        }
+    }
 
     public void StopChecking(IEnumerable<Proxy> proxies)
     {
-        // todo: not implemented
+        lock (_locker)
+        {
+            var collection = proxies.ToList();
+
+            _blocked.AddRange(collection.Except(_blocked));
+            _highPriority.RemoveAll(proxy => collection.Contains(proxy));
+        }
     }
 
     public event EventHandler<ProxyCheckingEventArgs> Checking = (_, _) => { };
@@ -63,7 +78,7 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
         var proxies = _proxies.GetProxies(
             Filter.Builder
                 .Count(_checker.FreeCheckSlot)
-                .Except(_inProgress.Keys)
+                .Except(_inProgress.Keys.Concat(_blocked))
                 .Include(_highPriority)
                 .StateNotExpired(_settings.ExpiredProxyActualState)
                 .SortedBy(SortingField.LastCheck, SortDirection.Asceding)
@@ -92,6 +107,8 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
     private readonly Timer _timer;
     private readonly ConcurrentDictionary<Proxy,bool> _inProgress = new();
     private readonly List<Proxy> _highPriority = new();
+    private readonly List<Proxy> _blocked = new();
+    private readonly object _locker = new();
 
     private const int TimerIntervalMilliseconds = 3000;
 }

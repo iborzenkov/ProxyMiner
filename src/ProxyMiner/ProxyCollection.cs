@@ -51,11 +51,6 @@ internal sealed class ProxyCollection : IProxyCollection
         return applier.Apply(filter);
     }
 
-    public IEnumerable<Proxy> GetRandomProxies(Filter filter)
-    {
-        throw new NotImplementedException();
-    }
-
     public event EventHandler<CollectionChangedEventArgs<Proxy>> CollectionChanged = (_, _) => { };
 
     internal void SetProxyState(Proxy proxy, ProxyState state)

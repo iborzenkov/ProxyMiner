@@ -72,6 +72,9 @@ namespace ProxyMiner.Demo.ViewModels
             CheckSelectedProxies = new RelayCommand(
                 () => _miner.Checker.CheckNow(new []{ SelectedProxy!.Proxy } ),
                 () => SelectedProxy != null);
+            StopCheckingSelectedProxies = new RelayCommand(
+                () => _miner.Checker.StopChecking(new []{ SelectedProxy!.Proxy } ),
+                () => SelectedProxy != null);
 
             _refreshStatusTimer = new Timer(_refreshPeriod.TotalMilliseconds) { Enabled = true };
             _refreshStatusTimer.Elapsed += RefreshStatus;
@@ -98,6 +101,7 @@ namespace ProxyMiner.Demo.ViewModels
         public ICommand SaveAnonimousProxies { get; }
         
         public ICommand CheckSelectedProxies { get; }
+        public ICommand StopCheckingSelectedProxies { get; }
         
         public string? ProxyStatus { get; private set; }
 

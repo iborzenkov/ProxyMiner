@@ -14,7 +14,6 @@ public interface IProxyCollection
 
     IEnumerable<Proxy> Items { get; }
 
-    IEnumerable<Proxy> GetRandomProxies(Filter filter);
     IEnumerable<Proxy> GetProxies(Filter filter);
 
     event EventHandler<CollectionChangedEventArgs<Proxy>> CollectionChanged;

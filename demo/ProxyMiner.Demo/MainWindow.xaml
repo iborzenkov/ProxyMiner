@@ -69,6 +69,7 @@
                         <MenuItem Header="Save Valid" Command="{Binding SaveValidProxies}" />
                         <MenuItem Header="Save Anonimous" Command="{Binding SaveAnonimousProxies}" />
                         <MenuItem Header="Check now" Command="{Binding CheckSelectedProxies}" />
+                        <MenuItem Header="Stop checking" Command="{Binding StopCheckingSelectedProxies}" />
                     </ContextMenu>
                 </DataGrid.ContextMenu>
             </DataGrid>
