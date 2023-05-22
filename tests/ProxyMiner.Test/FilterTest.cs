@@ -1,4 +1,5 @@
-using ProxyMiner.Filters;
+using ProxyMiner.Core.Filters;
+using ProxyMiner.Core.Models;
 
 namespace ProxyMiner.Test;
 

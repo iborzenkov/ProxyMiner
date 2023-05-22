@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using ProxyMiner.Producers;
+using ProxyMiner.Core.Producers;
 
 namespace ProxyMiner.Demo.ViewModels
 {

@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ProxyMiner\ProxyMiner.csproj" />
+    <ProjectReference Include="..\..\src\ProxyMiner.Checkers\ProxyMiner.Checkers.csproj" />
+    <ProjectReference Include="..\..\src\ProxyMiner.Core\ProxyMiner.Core.csproj" />
+    <ProjectReference Include="..\..\src\ProxyMiner.Providers\ProxyMiner.Providers.csproj" />
   </ItemGroup>
 
 </Project>

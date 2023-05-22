@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\ProxyMiner\ProxyMiner.csproj" />
+      <ProjectReference Include="..\..\src\ProxyMiner.Core\ProxyMiner.Core.csproj" />
     </ItemGroup>
 
 </Project>

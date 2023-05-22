@@ -1,8 +1,12 @@
 /demo/ProxyMiner.Demo/bin
 /demo/ProxyMiner.Demo/obj
-/src/ProxyMiner/bin
-/src/ProxyMiner/obj
 /.idea
 /tests/ProxyMiner.Test/obj
 /tests/ProxyMiner.Test/bin
 /ProxyMiner.sln.DotSettings.user
+/src/ProxyMiner.Checkers/bin
+/src/ProxyMiner.Checkers/obj
+/src/ProxyMiner.Providers/bin
+/src/ProxyMiner.Providers/obj
+/src/ProxyMiner.Core/obj
+/src/ProxyMiner.Core/bin

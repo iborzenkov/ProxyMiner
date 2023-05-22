@@ -8,10 +8,17 @@ using System.Runtime.CompilerServices;
 using System.Timers;
 using System.Windows.Input;
 using ProxyMiner.Checkers;
-using ProxyMiner.Filters;
-using ProxyMiner.Options;
-using ProxyMiner.Producers;
-using ProxyMiner.Producers.ProxyProviders;
+using ProxyMiner.Core;
+using ProxyMiner.Core.Checkers;
+using ProxyMiner.Core.Filters;
+using ProxyMiner.Core.Models;
+using ProxyMiner.Core.Models.ProxyCollections;
+using ProxyMiner.Core.Options;
+using ProxyMiner.Core.Producers;
+using ProxyMiner.Providers;
+using ProxyMiner.Providers.CsvFile;
+using ProxyMiner.Providers.FreeProxyList;
+using ProxyMiner.Providers.GeoNode;
 using Timer = System.Timers.Timer;
 
 namespace ProxyMiner.Demo.ViewModels

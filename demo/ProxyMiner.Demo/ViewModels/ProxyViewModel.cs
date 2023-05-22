@@ -1,6 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using ProxyMiner.Core;
+using ProxyMiner.Core.Checkers;
+using ProxyMiner.Core.Models;
 
 namespace ProxyMiner.Demo.ViewModels
 {
