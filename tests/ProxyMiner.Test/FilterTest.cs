@@ -161,17 +161,17 @@ public class FilterTest
         CollectionAssert.AreEqual(new[] { Proxy3, Proxy1, Proxy2, Proxy4 }, filtered);
     }
 
-    private static readonly Proxy Proxy1 = new Proxy(ProxyType.Http, "1.1.1.1", 1111);
-    private static readonly Proxy Proxy2 = new Proxy(ProxyType.Socks4, "2.2.2.2", 2222);
-    private static readonly Proxy Proxy3 = new Proxy(ProxyType.Socks5, "3.3.3.3", 3333);
-    private static readonly Proxy Proxy4 = new Proxy(ProxyType.Http, "4.4.4.4", 4444);
-    private static readonly Proxy Proxy5 = new Proxy(ProxyType.Socks4, "5.5.5.5", 5555);
+    private static readonly Proxy Proxy1 = new(ProxyType.Http, "1.1.1.1", 1111);
+    private static readonly Proxy Proxy2 = new(ProxyType.Socks4, "2.2.2.2", 2222);
+    private static readonly Proxy Proxy3 = new(ProxyType.Socks5, "3.3.3.3", 3333);
+    private static readonly Proxy Proxy4 = new(ProxyType.Http, "4.4.4.4", 4444);
+    private static readonly Proxy Proxy5 = new(ProxyType.Socks4, "5.5.5.5", 5555);
     
     private static readonly Dictionary<Proxy, ProxyState> RegularProxis = new()
     {
-        { Proxy1, new ProxyState(new DateTime(2023, 1, 25), new DateTime(2023, 1, 26), ProxyStatus.Anonimous) },
-        { Proxy2, new ProxyState(new DateTime(2023, 1, 23), new DateTime(2023, 1, 24), ProxyStatus.Cancelled) },
-        { Proxy3, new ProxyState(new DateTime(2023, 1, 27), new DateTime(2023, 1, 28), ProxyStatus.NotAnonimous) },
-        { Proxy4, new ProxyState(new DateTime(2023, 1, 21), new DateTime(2023, 1, 22), ProxyStatus.Anonimous) },
+        { Proxy1, new ProxyState(new DateTime(2023, 1, 25), new DateTime(2023, 1, 26), ProxyStatusFactory.Anonimous) },
+        { Proxy2, new ProxyState(new DateTime(2023, 1, 23), new DateTime(2023, 1, 24), ProxyStatusFactory.Cancelled) },
+        { Proxy3, new ProxyState(new DateTime(2023, 1, 27), new DateTime(2023, 1, 28), ProxyStatusFactory.NotAnonimous) },
+        { Proxy4, new ProxyState(new DateTime(2023, 1, 21), new DateTime(2023, 1, 22), ProxyStatusFactory.Anonimous) },
     };
 }

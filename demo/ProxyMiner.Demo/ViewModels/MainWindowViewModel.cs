@@ -133,9 +133,9 @@ namespace ProxyMiner.Demo.ViewModels
         private void ProxyCollectionChanged(object? sender, CollectionChangedEventArgs<Proxy> e)
         {
             var removedViewModels = new List<ProxyViewModel>();
-            if (e.Action == CollectionChangedAction.Remove && e.OldItems != null)
+            if (e.Action == Core.Models.ProxyCollections.CollectionChangeAction.Remove && e.OldItems != null)
             {
-                foreach (var viewModel in Proxies.Where(vm => e.OldItems.Contains(vm.Proxy)))
+                foreach (var viewModel in Proxies.Where<ProxyViewModel>(vm => e.OldItems.Contains(vm.Proxy)))
                 {
                     viewModel.Dispose();
                     removedViewModels.Add(viewModel);

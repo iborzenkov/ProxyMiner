@@ -2,20 +2,35 @@
 
 namespace ProxyMiner.Core.Models;
 
+/// <summary>
+///     Proxy status.
+/// </summary>
 public sealed class ProxyStatus
 {
-    private ProxyStatus() { }
+    /// <remarks>
+    ///     Instance creation is done through the ProxyStatusFactory.
+    /// </remarks>
+    internal ProxyStatus() { }
 
-    public static ProxyStatus ErrorStatus(HttpStatusCode status) => new() { Status = status };
-    public static ProxyStatus NotAnonimous => new() { Status = HttpStatusCode.OK };
-    public static ProxyStatus Anonimous => new() { Status = HttpStatusCode.OK, IsAnonimous = true };
-    public static ProxyStatus Cancelled => new() { IsCancelled = true };
+    /// <summary>
+    ///     Status code, when connecting via proxy.
+    /// </summary>
+    public HttpStatusCode Status { get; init; }
 
-    public HttpStatusCode Status { get; private init; }
+    /// <summary>
+    ///     Indicates that the proxy is anonymous.
+    /// </summary>
+    public bool IsAnonimous { get; init; }
 
-    public bool IsAnonimous { get; private init; }
-    public bool IsCancelled { get; private init; }
+    /// <summary>
+    ///     Indicates that the proxy check has been canceled.
+    /// </summary>
+    public bool IsCancelled { get; init; }
 
+    /// <summary>
+    ///     A sign that the proxy is alive.
+    /// </summary>
+    /// <remarks>It does not say that the proxy is anonymous or not anonymous.</remarks>
     public bool IsValid => !IsCancelled && Status == HttpStatusCode.OK;
 
     public override string ToString()

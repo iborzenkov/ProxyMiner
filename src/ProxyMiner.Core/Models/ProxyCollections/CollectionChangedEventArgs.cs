@@ -1,8 +1,12 @@
 ﻿namespace ProxyMiner.Core.Models.ProxyCollections;
 
+/// <summary>
+///     Event arguments about actions with collection elements.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public sealed class CollectionChangedEventArgs<T>
 {
-    private CollectionChangedEventArgs(CollectionChangedAction action, 
+    private CollectionChangedEventArgs(CollectionChangeAction action, 
         ICollection<T>? newItems, ICollection<T>? oldItems)
     {
         Action = action;
@@ -11,18 +15,25 @@ public sealed class CollectionChangedEventArgs<T>
     }
 
     internal static CollectionChangedEventArgs<T> RemoveEventArgs(ICollection<T> items) 
-        => new (CollectionChangedAction.Remove, null, items);
+        => new (CollectionChangeAction.Remove, null, items);
 
     internal static CollectionChangedEventArgs<T> AddEventArgs(ICollection<T> items)
-        => new (CollectionChangedAction.Add, items, null);
+        => new (CollectionChangeAction.Add, items, null);
 
-    public CollectionChangedAction Action { get; }
+    /// <summary>
+    ///     Collection change action.
+    /// </summary>
+    public CollectionChangeAction Action { get; }
+
+    /// <summary>
+    ///     List of old items in the collection.
+    /// </summary>
+    /// <remarks>Used when deleting items from a collection.</remarks>
     public ICollection<T>? OldItems { get; }
-    public ICollection<T>? NewItems { get; }
-}
 
-public enum CollectionChangedAction
-{
-    Add,
-    Remove
+    /// <summary>
+    ///     List of new items in the collection.
+    /// </summary>
+    /// <remarks>Used when adding items to a collection.</remarks>
+    public ICollection<T>? NewItems { get; }
 }

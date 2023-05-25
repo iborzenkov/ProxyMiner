@@ -9,13 +9,16 @@ public sealed class Miner : IMiner, IDisposable
 {
     public Miner(IChecker checker, ISettingsProvider settingsProvider)
     {
-        _producers = new ProducerCollection(settingsProvider.Settings);
+        var settings = settingsProvider.Settings;
+
+        _producers = new ProducerCollection(settings);
         _producers.Mined += ProxiesMined;
 
         _proxies = new ProxyCollection();
-        _proxyChecker = new ProxyChecker(checker, settingsProvider.Settings);
-        _proxyCheckerController = new ProxyCheckerController(
-            _proxies, _proxyChecker, settingsProvider.Settings);
+
+        _proxyChecker = new ProxyChecker(checker, settings);
+        
+        _proxyCheckerController = new ProxyCheckerController(_proxies, _proxyChecker, settings);
     }
 
     public IProducerCollection Producers => _producers;
@@ -38,6 +41,8 @@ public sealed class Miner : IMiner, IDisposable
     {
         _proxyChecker.Dispose();
         _proxyCheckerController.Dispose();
+        
+        _producers.Mined -= ProxiesMined;
     }
 
     private void ProxiesMined(object? sender, ProxyMinedEventArgs e)

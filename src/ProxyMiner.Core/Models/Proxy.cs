@@ -1,35 +1,77 @@
 ﻿namespace ProxyMiner.Core.Models;
 
+/// <summary>
+///     Proxy.
+/// </summary>
 public sealed class Proxy : IEquatable<Proxy>
 {
+    /// <summary>
+    ///     Proxy constructor without authorization data.
+    /// </summary>
+    /// <param name="type">Proxy type.</param>
+    /// <param name="host">Proxy host.</param>
+    /// <param name="port">Proxy port.</param>
     public Proxy(ProxyType type, string host, int port) 
-        : this(type, host, port, username: null, password: null)
-    {
-    }
-
-    public Proxy(ProxyType type, string host, int port, string? username, string? password)
     {
         Host = host;
         Port = port;
         Type = type;
-        Username= username;
-        Password= password;
-        
+
         Uri = new UriBuilder(GetScheme(), Host, Port).Uri;
     }
 
+    /// <summary>
+    ///     Proxy constructor with authorization data.
+    /// </summary>
+    /// <param name="type">Proxy type.</param>
+    /// <param name="host">Proxy host.</param>
+    /// <param name="port">Proxy port.</param>
+    /// <param name="username">Proxy username.</param>
+    /// <param name="password">Proxy password.</param>
+    public Proxy(ProxyType type, string host, int port, string username, string password)
+        : this(type, host, port)
+    {
+        Username= username;
+        Password= password;
+    }
+
+    /// <summary>
+    ///     Proxy host.
+    /// </summary>
     public string Host { get; }
+    
+    /// <summary>
+    ///     Proxy port.
+    /// </summary>
     public int Port { get; }
+
+    /// <summary>
+    ///     Proxy type.
+    /// </summary>
     public ProxyType Type { get; }
+
+    /// <summary>
+    ///     Proxy username.
+    /// </summary>
+    /// <remarks> May be null.</remarks>
     public string? Username { get; }
+
+    /// <summary>
+    ///     Proxy password.
+    /// </summary>
+    /// <remarks> May be null.</remarks>
     public string? Password { get; }
 
+    /// <summary>
+    ///     Proxy Uri.
+    /// </summary>
     public Uri Uri { get; }
 
     public bool Equals(Proxy? other)
     {
-        if (ReferenceEquals(null, other)) 
+        if (other is null) 
             return false;
+        
         if (ReferenceEquals(this, other)) 
             return true;
 
@@ -46,15 +88,8 @@ public sealed class Proxy : IEquatable<Proxy>
         }
     }
 
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) 
-            return false;
-        if (ReferenceEquals(this, obj)) 
-            return true;
-
-        return obj.GetType() == GetType() && Equals((Proxy)obj);
-    }
+    public override bool Equals(object? obj) 
+        => obj is not null && obj.GetType() == GetType() && Equals((Proxy)obj);
 
     public override int GetHashCode() => HashCode.Combine(Host, Port, Type, Username, Password);
 

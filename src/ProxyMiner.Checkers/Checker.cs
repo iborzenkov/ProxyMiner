@@ -36,12 +36,12 @@ public sealed class Checker : IChecker
             
             var statusCode = await IsHttpsConnectionPermitted(client, token);
             if (statusCode != HttpStatusCode.OK)
-                return ProxyStatus.ErrorStatus(statusCode);
+                return ProxyStatusFactory.ErrorStatus(statusCode);
 
             var isAnonimousProxy = await IsAnonimousProxy(client, proxy, token);
             return isAnonimousProxy
-                ? ProxyStatus.Anonimous
-                : ProxyStatus.NotAnonimous;
+                ? ProxyStatusFactory.Anonimous
+                : ProxyStatusFactory.NotAnonimous;
         },
         token);
     }
