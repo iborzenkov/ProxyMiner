@@ -6,8 +6,9 @@ public sealed class JsonSettingsProvider : ISettingsProvider, IDisposable
 {
     public JsonSettingsProvider(string filename)
     {
-        var settingsReader = new JsonReader(Settings);
-        _settingsWatcher = new SettingsFileWatcher(settingsReader, filename);
+        var settingsReader = new JsonReader();
+        var settingsApplier = new SettingsApplier(Settings);
+        _settingsWatcher = new SettingsFileWatcher(settingsReader, settingsApplier, filename);
     }
     
     public void Dispose()
@@ -21,57 +22,51 @@ public sealed class JsonSettingsProvider : ISettingsProvider, IDisposable
     
     private sealed class JsonReader : ISettingsFileReader
     {
-        public JsonReader(Settings settings)
+        public bool TryRead(string filename, out Settings? settings)
         {
-            _settings = settings;
-        }
-
-        public void TryRead(string filename)
-        {
+            settings = null;
             if (!File.Exists(filename))
-                return;
+                return false;
 
             try
             {
                 using var fileStream = new FileStream(filename, FileMode.Open);
-                var settings = JsonSerializer.Deserialize<SettingsDto>(fileStream,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true } );
-                if (settings == null)
-                    return;
+                var settingsDto = JsonSerializer.Deserialize<SettingsDto>(fileStream,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (settingsDto == null)
+                    return false;
 
-                _settings.CheckThreadCount = settings.CheckThreadCount;
-
-                _settings.SourceScanPeriod = settings.SourceScanPeriodSeconds == -1
-                    ? TimeSpan.MaxValue
-                    : TimeSpan.FromSeconds(settings.SourceScanPeriodSeconds);
-                    
-                _settings.SourceTimeout = settings.SourceTimeoutSeconds == -1
-                    ? Timeout.InfiniteTimeSpan
-                    : TimeSpan.FromSeconds(settings.SourceTimeoutSeconds);
-                    
-                _settings.CheckTimeout = settings.CheckTimeoutSeconds == -1
-                    ? Timeout.InfiniteTimeSpan
-                    : TimeSpan.FromSeconds(settings.CheckTimeoutSeconds);
-                    
-                _settings.ExpiredProxyActualState = settings.ExpiredProxyActualStateSeconds == -1
-                    ? TimeSpan.MaxValue
-                    : TimeSpan.FromSeconds(settings.ExpiredProxyActualStateSeconds);
+                settings = new Settings
+                {
+                    CheckThreadCount = settingsDto.CheckThreadCount,
+                    SourceScanPeriod = settingsDto.SourceScanPeriodSeconds == -1
+                        ? TimeSpan.MaxValue
+                        : TimeSpan.FromSeconds(settingsDto.SourceScanPeriodSeconds),
+                    SourceTimeout = settingsDto.SourceTimeoutSeconds == -1
+                        ? Timeout.InfiniteTimeSpan
+                        : TimeSpan.FromSeconds(settingsDto.SourceTimeoutSeconds),
+                    CheckTimeout = settingsDto.CheckTimeoutSeconds == -1
+                        ? Timeout.InfiniteTimeSpan
+                        : TimeSpan.FromSeconds(settingsDto.CheckTimeoutSeconds),
+                    ExpiredProxyActualState = settingsDto.ExpiredProxyActualStateSeconds == -1
+                        ? TimeSpan.MaxValue
+                        : TimeSpan.FromSeconds(settingsDto.ExpiredProxyActualStateSeconds)
+                };
+                return true;
             }
             catch
             {
-                // ignored
+                return false;
             }
         }
 
-        private readonly Settings _settings;
-    }
-
-    private class SettingsDto
-    {
-        public int SourceTimeoutSeconds { get; set; }
-        public int CheckTimeoutSeconds { get; set; }
-        public int SourceScanPeriodSeconds { get; set; }
-        public int CheckThreadCount { get; set; }
-        public int ExpiredProxyActualStateSeconds { get; set; }
+        private class SettingsDto
+        {
+            public int SourceTimeoutSeconds { get; set; }
+            public int CheckTimeoutSeconds { get; set; }
+            public int SourceScanPeriodSeconds { get; set; }
+            public int CheckThreadCount { get; set; }
+            public int ExpiredProxyActualStateSeconds { get; set; }
+        }
     }
 }

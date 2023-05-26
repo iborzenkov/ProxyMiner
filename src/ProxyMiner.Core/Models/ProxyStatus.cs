@@ -5,12 +5,29 @@ namespace ProxyMiner.Core.Models;
 /// <summary>
 ///     Proxy status.
 /// </summary>
-public sealed class ProxyStatus
+public sealed record ProxyStatus
 {
-    /// <remarks>
-    ///     Instance creation is done through the ProxyStatusFactory.
-    /// </remarks>
-    internal ProxyStatus() { }
+    private ProxyStatus() { }
+
+    /// <summary>
+    ///     Creates a proxy status with the status "Not anonymous".
+    /// </summary>
+    public static ProxyStatus ErrorStatus(HttpStatusCode status) => new() { Status = status };
+
+    /// <summary>
+    ///     Creates a proxy status with the status "Not anonymous".
+    /// </summary>
+    public static ProxyStatus NotAnonimous => new() { Status = HttpStatusCode.OK };
+
+    /// <summary>
+    ///     Creates a proxy status with the status "Anonymous".
+    /// </summary>
+    public static ProxyStatus Anonimous => new() { Status = HttpStatusCode.OK, IsAnonimous = true };
+
+    /// <summary>
+    ///     Creates a proxy status with the sign "verification canceled".
+    /// </summary>
+    public static ProxyStatus Cancelled => new() { IsCancelled = true };
 
     /// <summary>
     ///     Status code, when connecting via proxy.

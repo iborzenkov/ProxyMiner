@@ -1,7 +1,7 @@
 using ProxyMiner.Core.Filters;
 using ProxyMiner.Core.Models;
 
-namespace ProxyMiner.Test;
+namespace ProxyMiner.Tests;
 
 [TestClass]
 public class FilterTest
@@ -169,9 +169,9 @@ public class FilterTest
     
     private static readonly Dictionary<Proxy, ProxyState> RegularProxis = new()
     {
-        { Proxy1, new ProxyState(new DateTime(2023, 1, 25), new DateTime(2023, 1, 26), ProxyStatusFactory.Anonimous) },
-        { Proxy2, new ProxyState(new DateTime(2023, 1, 23), new DateTime(2023, 1, 24), ProxyStatusFactory.Cancelled) },
-        { Proxy3, new ProxyState(new DateTime(2023, 1, 27), new DateTime(2023, 1, 28), ProxyStatusFactory.NotAnonimous) },
-        { Proxy4, new ProxyState(new DateTime(2023, 1, 21), new DateTime(2023, 1, 22), ProxyStatusFactory.Anonimous) },
+        { Proxy1, new ProxyState(new DateTime(2023, 1, 25), new DateTime(2023, 1, 26), ProxyStatus.Anonimous) },
+        { Proxy2, new ProxyState(new DateTime(2023, 1, 23), new DateTime(2023, 1, 24), ProxyStatus.Cancelled) },
+        { Proxy3, new ProxyState(new DateTime(2023, 1, 27), new DateTime(2023, 1, 28), ProxyStatus.NotAnonimous) },
+        { Proxy4, new ProxyState(new DateTime(2023, 1, 21), new DateTime(2023, 1, 22), ProxyStatus.Anonimous) },
     };
 }

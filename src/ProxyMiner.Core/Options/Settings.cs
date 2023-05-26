@@ -71,9 +71,22 @@ public sealed class Settings
     
     public event EventHandler<SettingsChangedEventArgs> Changed = (_, _) => { };
 
+    internal IDisposable BeginApply()
+    {
+        _groupingTransaction = new GroupingTransaction(this);
+        return _groupingTransaction;
+    }
+
     private void OnChanged([CallerMemberName] string settingName = "")
     {
-        Changed.Invoke(this, new SettingsChangedEventArgs(settingName));
+        if (_groupingTransaction == null)
+        {
+            Changed.Invoke(this, new SettingsChangedEventArgs(new[] { settingName }));
+        }
+        else
+        {
+            _groupingTransaction.AddChangedSettingName(settingName);
+        }
     }
 
     private int _checkThreadCount = 10;
@@ -81,4 +94,45 @@ public sealed class Settings
     private TimeSpan _checkTimeout = TimeSpan.FromSeconds(10);
     private TimeSpan _sourceScanPeriod = TimeSpan.FromMinutes(30);
     private TimeSpan _expiredProxyActualState = TimeSpan.FromSeconds(60);
+    
+    private GroupingTransaction? _groupingTransaction;
+
+    private sealed class GroupingTransaction : IDisposable
+    {
+        public GroupingTransaction(Settings settings) => _settings = settings;
+
+        public void Dispose()
+        {
+            _settings._groupingTransaction = null;
+            
+            if (_isNeedChangeAllSettings || _applingSettingsName.Any())
+            {
+                _settings.Changed.Invoke(this, new SettingsChangedEventArgs(_applingSettingsName));
+            }
+        }
+
+        public void AddChangedSettingName(string settingName)
+        {
+            if (_isNeedChangeAllSettings)
+                return;
+
+            if (string.IsNullOrEmpty(settingName))
+            {
+                _applingSettingsName.Clear();
+                _isNeedChangeAllSettings = true;
+            }
+            else
+            {
+                if (!_applingSettingsName.Contains(settingName, StringComparer.OrdinalIgnoreCase))
+                {
+                    _applingSettingsName.Add(settingName);
+                }
+            }
+        }
+
+        private bool _isNeedChangeAllSettings;
+        private readonly HashSet<string> _applingSettingsName = new();
+        private readonly Settings _settings;
+
+    }
 }

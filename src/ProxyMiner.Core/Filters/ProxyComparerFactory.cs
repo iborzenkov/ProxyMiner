@@ -2,14 +2,24 @@
 
 namespace ProxyMiner.Core.Filters;
 
+/// <summary>
+///     Factory for building proxy comparers.
+/// </summary>
 internal static class ProxyComparerFactory
 {
+    /// <summary>
+    ///     Build proxy comparer.
+    /// </summary>
+    /// <param name="sort">Specifying sorting.</param>
+    /// <param name="stateFinder">The delegate returns the state of the specifyed proxy.</param>
+    /// <returns>Proxy comparer</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Occurs if the sorting direction is not implemented.</exception>
     internal static IComparer<Proxy> Make(ProxySort sort, Func<Proxy, ProxyState> stateFinder)
     {
         return sort.Field switch
         {
             SortingField.LastCheck => new LastCheckProxyComparer(sort.Direction, stateFinder),
-            _ => throw new ArgumentOutOfRangeException($"Sorting for '{sort.Field}' not implemented")
+            _ => throw new ArgumentOutOfRangeException($"Sorting for '{sort.Field}' is not implemented")
         };
     }
 
@@ -44,8 +54,8 @@ internal static class ProxyComparerFactory
             if (stateX == stateY)
                 return 0;
 
-            var finishDateX = stateX.FinishTime;
-            var finishDateY = stateY.FinishTime;
+            var finishDateX = stateX.FinishTimeUtc;
+            var finishDateY = stateY.FinishTimeUtc;
 
             if (finishDateX == null && finishDateY == null)
                 return 0;

@@ -49,7 +49,7 @@ internal sealed class ProducerTask : IDisposable
         if (_commonTokenSource == null || _commonTokenSource.Token.IsCancellationRequested)
             return;
 
-        var startTime = DateTime.UtcNow;
+        var startTimeUtc = DateTime.UtcNow;
 
         using var timeoutTokenSource = new CancellationTokenSource(_settings.SourceTimeout);
         using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
@@ -57,7 +57,7 @@ internal sealed class ProducerTask : IDisposable
             timeoutTokenSource.Token);
 
         var proxies = new List<Proxy>();
-        _miningStart(_producer, startTime);
+        _miningStart(_producer, startTimeUtc);
         try
         {
             proxies.AddRange(await _producer.Provider.GetProxies(linkedTokenSource.Token));

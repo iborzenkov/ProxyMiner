@@ -3,20 +3,20 @@
 /// <summary>
 ///     Proxy verification state.
 /// </summary>
-public sealed class ProxyState
+public sealed record ProxyState
 {
     private ProxyState() { }
 
     /// <summary>
     ///     Proxy verification state constructor.
     /// </summary>
-    /// <param name="startTime">Check start time.</param>
-    /// <param name="finishTime">Check finish time.</param>
+    /// <param name="startTimeUtc">Check start time.</param>
+    /// <param name="finishTimeUtc">Check finish time.</param>
     /// <param name="status">Proxy status.</param>
-    public ProxyState(DateTime startTime, DateTime finishTime, ProxyStatus status)
+    public ProxyState(DateTime startTimeUtc, DateTime finishTimeUtc, ProxyStatus status)
     {
-        StartTime = startTime;
-        FinishTime = finishTime;
+        StartTimeUtc = startTimeUtc;
+        FinishTimeUtc = finishTimeUtc;
         Status = status;
     }
 
@@ -30,19 +30,19 @@ public sealed class ProxyState
     /// <summary>
     ///     Creates a proxy state that signals that the proxy check has been started, but has not finished yet.
     /// </summary>
-    /// <param name="startTime">Check start time.</param>
+    /// <param name="startTimeUtc">Check start time.</param>
     /// <returns>Proxy state.</returns>
-    public static ProxyState StartChecking(DateTime startTime) => new() { StartTime = startTime };
+    public static ProxyState StartChecking(DateTime startTimeUtc) => new() { StartTimeUtc = startTimeUtc };
 
     /// <summary>
     ///     Check start time.
     /// </summary>
-    public DateTime? StartTime { get; private init; }
+    public DateTime? StartTimeUtc { get; private init; }
 
     /// <summary>
     ///     Check finish time.
     /// </summary>
-    public DateTime? FinishTime { get; }
+    public DateTime? FinishTimeUtc { get; }
 
     /// <summary>
     ///     Proxy status. If Null, then the status is undefined.

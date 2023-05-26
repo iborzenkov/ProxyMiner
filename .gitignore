@@ -3,8 +3,8 @@
 /ProxyMiner.sln.DotSettings.user
 /demo/ProxyMiner.Demo/bin
 /demo/ProxyMiner.Demo/obj
-/tests/ProxyMiner.Test/bin
-/tests/ProxyMiner.Test/obj
+/tests/ProxyMiner.Tests/bin
+/tests/ProxyMiner.Tests/obj
 /src/ProxyMiner.Checkers/bin
 /src/ProxyMiner.Checkers/obj
 /src/ProxyMiner.Providers/bin

@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:ProxyMiner.Demo.ViewModels"
-        xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         Title="MainWindow"
         Width="800"
         Height="450"
@@ -12,9 +11,9 @@
                                          IsDesignTimeCreatable=True}"
         mc:Ignorable="d">
     <Window.Resources>
-    <CollectionViewSource x:Key="Proxies" Source="{Binding Proxies}" 
-                          Filter="Proxies_Filter">
-    </CollectionViewSource>
+        <CollectionViewSource x:Key="Proxies"
+                              Filter="Proxies_Filter"
+                              Source="{Binding Proxies}" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -35,8 +34,8 @@
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Binding="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Header="Active?" />
                         <DataGridTextColumn Binding="{Binding Name}" Header="Name" />
-                        <DataGridTextColumn Binding="{Binding StartTime}" Header="Last start date" />
-                        <DataGridTextColumn Binding="{Binding FinishTime}" Header="Last finish date" />
+                        <DataGridTextColumn Binding="{Binding StartTimeUtc}" Header="Last start date" />
+                        <DataGridTextColumn Binding="{Binding FinishTimeUtc}" Header="Last finish date" />
                         <DataGridTextColumn Binding="{Binding DurationInSec, Mode=OneWay}" Header="Duration, sec" />
                         <DataGridTextColumn Binding="{Binding TotalCount}" Header="Total count" />
                         <DataGridTextColumn Binding="{Binding ValidCount}" Header="Valid count" />
@@ -49,7 +48,7 @@
             </StackPanel>
         </GroupBox>
         <GroupBox Grid.Row="2" Header="Proxies">
-            <DataGrid AutoGenerateColumns="False" 
+            <DataGrid AutoGenerateColumns="False"
                       ItemsSource="{Binding Source={StaticResource Proxies}}"
                       SelectedItem="{Binding SelectedProxy}">
                 <DataGrid.Columns>
@@ -59,17 +58,17 @@
                     <DataGridTextColumn Binding="{Binding Username, Mode=OneWay}" Header="Username" />
                     <DataGridTextColumn Binding="{Binding Password, Mode=OneWay}" Header="Password" />
                     <DataGridTextColumn Binding="{Binding Status, Mode=OneWay}" Header="Status" />
-                    <DataGridTextColumn Binding="{Binding StartCheck, Mode=OneWay}" Header="Start check" />
-                    <DataGridTextColumn Binding="{Binding FinishCheck, Mode=OneWay}" Header="Finish check" />
+                    <DataGridTextColumn Binding="{Binding StartCheckUtc, Mode=OneWay}" Header="Start check" />
+                    <DataGridTextColumn Binding="{Binding FinishCheckUtc, Mode=OneWay}" Header="Finish check" />
                     <DataGridTextColumn Binding="{Binding DurationInSec, Mode=OneWay}" Header="Duration, sec" />
                 </DataGrid.Columns>
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Save All" Command="{Binding SaveAllProxies}" />
-                        <MenuItem Header="Save Valid" Command="{Binding SaveValidProxies}" />
-                        <MenuItem Header="Save Anonimous" Command="{Binding SaveAnonimousProxies}" />
-                        <MenuItem Header="Check now" Command="{Binding CheckSelectedProxies}" />
-                        <MenuItem Header="Stop checking" Command="{Binding StopCheckingSelectedProxies}" />
+                        <MenuItem Command="{Binding SaveAllProxies}" Header="Save All" />
+                        <MenuItem Command="{Binding SaveValidProxies}" Header="Save Valid" />
+                        <MenuItem Command="{Binding SaveAnonimousProxies}" Header="Save Anonimous" />
+                        <MenuItem Command="{Binding CheckSelectedProxies}" Header="Check now" />
+                        <MenuItem Command="{Binding StopCheckingSelectedProxies}" Header="Stop checking" />
                     </ContextMenu>
                 </DataGrid.ContextMenu>
             </DataGrid>

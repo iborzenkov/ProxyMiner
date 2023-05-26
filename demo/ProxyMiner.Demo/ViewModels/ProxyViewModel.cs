@@ -43,24 +43,24 @@ namespace ProxyMiner.Demo.ViewModels
         public bool? IsValid { get; private set; }
         public bool? IsAnonimous { get; private set; }
         
-        public DateTime? StartCheck
+        public DateTime? StartCheckUtc
         {
-            get => _startCheck;
+            get => _startCheckUtc;
             private set
             {
-                _startCheck = value;
+                _startCheckUtc = value;
                 
                 OnChanged();
                 OnChanged(nameof(DurationInSec));
             }
         }
 
-        public DateTime? FinishCheck
+        public DateTime? FinishCheckUtc
         {
-            get => _finishCheck;
+            get => _finishCheckUtc;
             private set
             {
-                _finishCheck = value;
+                _finishCheckUtc = value;
                 
                 OnChanged();
                 OnChanged(nameof(DurationInSec));
@@ -71,9 +71,9 @@ namespace ProxyMiner.Demo.ViewModels
         {
             get
             {
-                return (StartCheck == null || FinishCheck == null) 
+                return (StartCheckUtc == null || FinishCheckUtc == null) 
                     ? null
-                    : (FinishCheck - StartCheck).Value.Seconds;
+                    : (FinishCheckUtc - StartCheckUtc).Value.Seconds;
             }
         }
 
@@ -85,8 +85,8 @@ namespace ProxyMiner.Demo.ViewModels
         {
             if (args.Proxy.Equals(Proxy))
             {
-                StartCheck = args.StartTime;
-                FinishCheck = null;
+                StartCheckUtc = args.StartTimeUtc;
+                FinishCheckUtc = null;
                 SetStatus(null);
             }
         }
@@ -96,8 +96,8 @@ namespace ProxyMiner.Demo.ViewModels
             if (args.Proxy.Equals(Proxy))
             {
                 SetStatus(args.State.Status);
-                StartCheck = args.State.StartTime;
-                FinishCheck = args.State.FinishTime;
+                StartCheckUtc = args.State.StartTimeUtc;
+                FinishCheckUtc = args.State.FinishTimeUtc;
             }
         }
 
@@ -116,7 +116,7 @@ namespace ProxyMiner.Demo.ViewModels
         private readonly ICheckerController _checker;
  
         private string? _status;
-        private DateTime? _startCheck;
-        private DateTime? _finishCheck;
+        private DateTime? _startCheckUtc;
+        private DateTime? _finishCheckUtc;
     }
 }

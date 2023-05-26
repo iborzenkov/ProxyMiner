@@ -2,6 +2,9 @@
 
 namespace ProxyMiner.Core.Checkers;
 
+/// <summary>
+///     Arguments of the event about the end of the proxy check.
+/// </summary>
 public sealed class ProxyCheckedEventArgs : EventArgs
 {
     public ProxyCheckedEventArgs(Proxy proxy, ProxyState state)
@@ -10,6 +13,13 @@ public sealed class ProxyCheckedEventArgs : EventArgs
         State = state;
     }
 
+    /// <summary>
+    ///     Proxy.
+    /// </summary>
     public Proxy Proxy { get; }
+
+    /// <summary>
+    ///     Proxy state after verification.
+    /// </summary>
     public ProxyState State { get; }
 }

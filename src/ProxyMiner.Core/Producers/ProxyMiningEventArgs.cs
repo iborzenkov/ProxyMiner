@@ -2,12 +2,12 @@ namespace ProxyMiner.Core.Producers;
 
 public sealed class ProxyMiningEventArgs
 {
-    public ProxyMiningEventArgs(Producer producer, DateTime startTime)
+    public ProxyMiningEventArgs(Producer producer, DateTime startTimeUtc)
     {
         Producer = producer;
-        StartTime = startTime;
+        StartTimeUtc = startTimeUtc;
     }
 
     public Producer Producer { get; }
-    public DateTime StartTime { get; }
+    public DateTime StartTimeUtc { get; }
 }

@@ -2,7 +2,10 @@ using ProxyMiner.Core.Models;
 
 namespace ProxyMiner.Core.Filters;
 
-public sealed class FilterApplier
+/// <summary>
+///     Gets an indication of the filter and applies it to the proxies collection.
+/// </summary>
+internal sealed class FilterApplier
 {
     public FilterApplier(Dictionary<Proxy, ProxyState> proxyWithState)
     {
@@ -44,13 +47,13 @@ public sealed class FilterApplier
         foreach (var proxy in proxies)
         {
             var state = _proxyWithState[proxy];
-            if (state.FinishTime == null)
+            if (state.FinishTimeUtc == null)
             {
                 result.Add(proxy);
             }
             else
             {
-                if (state.FinishTime.Value + expiredState.Value <= DateTime.UtcNow)
+                if (state.FinishTimeUtc.Value + expiredState.Value <= DateTime.UtcNow)
                     result.Add(proxy);
             }
         }

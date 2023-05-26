@@ -64,7 +64,7 @@ internal sealed class ProxyChecker : IDisposable
                         catch (TaskCanceledException)
                         {
                             _observers.ForEach(o => o.Checked(
-                                new ProxyCheckedEventArgs(proxy, new ProxyState(startDate, DateTime.UtcNow, ProxyStatusFactory.Cancelled))));
+                                new ProxyCheckedEventArgs(proxy, new ProxyState(startDate, DateTime.UtcNow, ProxyStatus.Cancelled))));
                             if (_commonTokenSource.IsCancellationRequested)
                                 throw;
                         }

@@ -28,9 +28,9 @@ namespace ProxyMiner.Demo.ViewModels
         public MainWindowViewModel()
         {
             var checker = new Checker();
-            var settingsProvider = new JsonSettingsProvider("options.json");
+            _settingsProvider = new JsonSettingsProvider("options.json");
             
-            _miner = new Miner(checker, settingsProvider);
+            _miner = new Miner(checker, _settingsProvider);
 
             _miner.Producers.CollectionChanged += SourceCollectionChanged;
             _miner.Producers.Add(new Producer("Free-Proxy-List", new FreeProxyListProvider()));
@@ -157,7 +157,7 @@ namespace ProxyMiner.Demo.ViewModels
         private void RefreshStatus(object? sender, ElapsedEventArgs e)
         {
             ProxyStatus = $"Total proxies: {Proxies.Count}, " +
-                $"checking: {Proxies.Count(p => p.StartCheck != null && p.FinishCheck == null)}, " +
+                $"checking: {Proxies.Count(p => p.StartCheckUtc != null && p.FinishCheckUtc == null)}, " +
                 $"checked: {Proxies.Count(p => p.Status != null)}, " +
                 $"valid: {Proxies.Count(p => p.IsValid != null && p.IsValid.Value)}, " +
                 $"anonimous: {Proxies.Count(p => p.IsAnonimous != null && p.IsAnonimous.Value)}";
@@ -174,5 +174,6 @@ namespace ProxyMiner.Demo.ViewModels
         private bool _isActive;
         private readonly Timer _refreshStatusTimer;
         private readonly TimeSpan _refreshPeriod = TimeSpan.FromSeconds(5);
+        private readonly JsonSettingsProvider _settingsProvider;
     }
 }

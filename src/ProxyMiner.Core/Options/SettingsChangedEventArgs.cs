@@ -2,13 +2,13 @@
 
 public sealed class SettingsChangedEventArgs
 {
-    public SettingsChangedEventArgs(string settingName)
+    public SettingsChangedEventArgs(IEnumerable<string> settingNames)
     {
-        SettingName = settingName;
+        SettingNames = settingNames;
     }
 
-    public bool IsThisProperty(string settingName) => string.IsNullOrEmpty(SettingName)
-        || SettingName.Equals(settingName, StringComparison.Ordinal);
+    public bool IsThisProperty(string settingName) => !SettingNames.Any()
+        || SettingNames.Contains(settingName);
 
-    public string SettingName { get; }
+    public IEnumerable<string> SettingNames { get; }
 }

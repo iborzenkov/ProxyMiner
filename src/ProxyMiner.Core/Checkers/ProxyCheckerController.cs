@@ -63,7 +63,7 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
 
     void ICheckObserver.Checking(ProxyCheckingEventArgs args)
     {
-        _proxies.SetProxyState(args.Proxy, ProxyState.StartChecking(args.StartTime));
+        _proxies.SetProxyState(args.Proxy, ProxyState.StartChecking(args.StartTimeUtc));
         Checking.Invoke(this, args);
     }
 
