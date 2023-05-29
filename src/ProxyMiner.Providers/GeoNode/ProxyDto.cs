@@ -1,7 +1,7 @@
 using ProxyMiner.Core.Models;
 
 namespace ProxyMiner.Providers.GeoNode;
-// todo: проверить с sealed и PageDto тоже
+
 internal sealed class ProxyDto
 {
     public string? Ip { get; set; }

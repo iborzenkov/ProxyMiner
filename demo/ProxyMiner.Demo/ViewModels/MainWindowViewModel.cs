@@ -35,8 +35,6 @@ namespace ProxyMiner.Demo.ViewModels
             _miner.Producers.AddRange(new[]
             {
                 new Producer("Free-Proxy-List", new FreeProxyListProvider()),
-                new Producer("proxies.txt", new CsvFileProvider("proxies.txt", CsvFileSettings.Default)),
-                new Producer("brief.txt", new CsvFileProvider("brief.txt", CsvFileSettings.Default)),
                 new Producer("all.csv", new CsvFileProvider("all.csv", CsvFileSettings.Default)),
                 new Producer("valid.csv", new CsvFileProvider("valid.csv", CsvFileSettings.Default)),
                 new Producer("anonimous.csv", new CsvFileProvider("anonimous.csv", CsvFileSettings.Default)),
@@ -63,7 +61,7 @@ namespace ProxyMiner.Demo.ViewModels
                 () => IsActive);
 
             AddSourceCommand = new RelayCommand(
-                () => _miner.Producers.Add(new Producer("brief.txt", new CsvFileProvider("brief.txt", CsvFileSettings.Default))));
+                () => _miner.Producers.Add(new Producer("all.csv", new CsvFileProvider("all.csv", CsvFileSettings.Default))));
             RemoveSourceCommand = new RelayCommand(
                 () => _miner.Producers.Remove(_miner.Producers.Items.Last()),
                 () => _miner.Producers.Items.Any());

@@ -52,13 +52,13 @@ namespace ProxyMiner.Demo.ViewModels
             }
         }
         
-        public int? DurationInSec
+        public double? DurationInSec
         {
             get
             {
                 return (StartTimeUtc == null || FinishTimeUtc == null) 
                     ? null
-                    : (FinishTimeUtc - StartTimeUtc).Value.Seconds;
+                    : (FinishTimeUtc - StartTimeUtc).Value.TotalSeconds;
             }
         }
         
