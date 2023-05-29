@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using ProxyMiner.Core.Models;
+using ProxyMiner.Core.Models.BaseCollections;
 using ProxyMiner.Core.Options;
 
 namespace ProxyMiner.Core.Producers;
@@ -11,37 +12,60 @@ internal sealed class ProducerCollection : IProducerCollection
         _settings = settings;
     }
 
-    public void Add(Producer producer)
+    public void Add(Producer producer) => AddRange(new[] { producer });
+
+    public void AddRange(IEnumerable<Producer> producers)
     {
-        if (_items.ContainsKey(producer))
-            return;
-
-        if (_items.TryAdd(producer, new ProducerTask(producer, _settings, SessionStart, SessionDone)))
+        var addedItems = new List<Producer>();
+        foreach (var producer in producers)
         {
-            producer.EnabledChanged += ProducerEnabledChanged;
+            if (_items.ContainsKey(producer))
+                continue;
 
-            TryStartTaskOf(producer);
-            
-            OnCollectionChanged();
+            if (_items.TryAdd(producer, new ProducerTask(producer, _settings, SessionStart, SessionDone)))
+            {
+                producer.EnabledChanged += ProducerEnabledChanged;
+
+                TryStartTaskOf(producer);
+                
+                addedItems.Add(producer);
+            }
         }
 
-        void SessionStart(Producer source, DateTime startTimeUtc) 
+        if (addedItems.Any())
+        {
+            OnCollectionChanged(CollectionChangedEventArgs<Producer>.AddEventArgs(addedItems));
+        }
+
+        void SessionStart(Producer source, DateTime startTimeUtc)
             => Mining.Invoke(this, new ProxyMiningEventArgs(source, startTimeUtc));
-        void SessionDone(Producer source, DateTime finishTime, IEnumerable<Proxy> proxies) 
+        void SessionDone(Producer source, DateTime finishTime, IEnumerable<Proxy> proxies)
             => Mined.Invoke(this, new ProxyMinedEventArgs(source, finishTime, proxies));
     }
 
-    public void Remove(Producer producer)
+
+    public void Remove(Producer producer) => RemoveRange(new[] { producer });
+
+    public void RemoveRange(IEnumerable<Producer> producers)
     {
-        if (!_items.TryRemove(producer, out var sourceTask))
-            return;
+        var removedItems = new List<Producer>();
+        foreach (var producer in producers)
+        {
+            if (!_items.TryRemove(producer, out var sourceTask))
+                continue;
 
-        producer.EnabledChanged -= ProducerEnabledChanged;
+            producer.EnabledChanged -= ProducerEnabledChanged;
 
-        TryStopTaskOf(producer);
-        sourceTask.Dispose();
+            TryStopTaskOf(producer);
+            sourceTask.Dispose();
 
-        OnCollectionChanged();
+            removedItems.Add(producer);
+        }
+
+        if (removedItems.Any())
+        {
+            OnCollectionChanged(CollectionChangedEventArgs<Producer>.RemoveEventArgs(removedItems));
+        }
     }
 
     public IEnumerable<Producer> Items => _items.Keys;
@@ -75,7 +99,7 @@ internal sealed class ProducerCollection : IProducerCollection
     public event EventHandler<ProxyMiningEventArgs> Mining = (_, _) => { };
     public event EventHandler<ProxyMinedEventArgs> Mined = (_, _) => { };
     
-    public event EventHandler<EventArgs> CollectionChanged = (_, _) => { };
+    public event EventHandler<CollectionChangedEventArgs<Producer>> CollectionChanged = (_, _) => { };
 
     private void TryStartTaskOf(Producer producer)
     {
@@ -108,7 +132,7 @@ internal sealed class ProducerCollection : IProducerCollection
         }
     }
 
-    private void OnCollectionChanged() => CollectionChanged.Invoke(this, EventArgs.Empty);
+    private void OnCollectionChanged(CollectionChangedEventArgs<Producer> args) => CollectionChanged.Invoke(this, args);
 
     private readonly Settings _settings;
     private readonly ConcurrentDictionary<Producer, ProducerTask> _items = new();

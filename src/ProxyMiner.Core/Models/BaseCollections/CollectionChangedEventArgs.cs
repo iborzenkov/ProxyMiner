@@ -1,10 +1,10 @@
-﻿namespace ProxyMiner.Core.Models.ProxyCollections;
+﻿namespace ProxyMiner.Core.Models.BaseCollections;
 
 /// <summary>
 ///     Event arguments about actions with collection elements.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public sealed class CollectionChangedEventArgs<T>
+public sealed class CollectionChangedEventArgs<T> : EventArgs
 {
     private CollectionChangedEventArgs(CollectionChangeAction action, 
         ICollection<T>? newItems, ICollection<T>? oldItems)

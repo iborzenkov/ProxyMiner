@@ -38,6 +38,25 @@ internal sealed class ProducerTask : IDisposable
         _timer.Elapsed += TimerElapsed;
     }
 
+    public void Stop()
+    {
+        if (!_isActive)
+            return;
+
+        _timer?.Stop();
+        _timer?.Dispose();
+        _timer = null;
+
+        _commonTokenSource?.Cancel();
+        _commonTokenSource?.Dispose();
+
+        _settings.Changed -= SettingsChanged;
+
+        _isActive = false;
+    }
+
+    public void Dispose() => Stop();
+
     private async void TimerElapsed(object? sender, ElapsedEventArgs e)
     {
         if (_timer != null && !_timerInited)
@@ -61,7 +80,7 @@ internal sealed class ProducerTask : IDisposable
         try
         {
             proxies.AddRange(await _producer.Provider.GetProxies(linkedTokenSource.Token));
-            
+
             _timer?.Start();
         }
         catch (TaskCanceledException) { }
@@ -71,25 +90,6 @@ internal sealed class ProducerTask : IDisposable
             _miningFinished(_producer, DateTime.UtcNow, proxies);
         }
     }
-
-    public void Stop()
-    {
-        if (!_isActive)
-            return;
-
-        _timer?.Stop();
-        _timer?.Dispose();
-        _timer = null;
-
-        _commonTokenSource?.Cancel();
-        _commonTokenSource?.Dispose();
-
-        _settings.Changed -= SettingsChanged;
-
-        _isActive = false;
-    }
-
-    public void Dispose() => Stop();
 
     private void SettingsChanged(object? sender, SettingsChangedEventArgs e)
     {

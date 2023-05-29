@@ -1,4 +1,4 @@
-﻿namespace ProxyMiner.Core.Models.ProxyCollections;
+﻿namespace ProxyMiner.Core.Models.BaseCollections;
 
 /// <summary>
 ///     Action with collection items.

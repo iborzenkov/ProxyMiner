@@ -2,6 +2,9 @@
 
 namespace ProxyMiner.Core.Options;
 
+/// <summary>
+///     ProxyMiner settings.
+/// </summary>
 public sealed class Settings
 {
     public TimeSpan SourceTimeout

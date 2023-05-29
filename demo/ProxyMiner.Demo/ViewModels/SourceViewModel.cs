@@ -41,12 +41,12 @@ namespace ProxyMiner.Demo.ViewModels
                 OnChanged(nameof(DurationInSec));
             }
         }
-        public DateTime? FinishTime
+        public DateTime? FinishTimeUtc
         {
-            get => _finishTime;
+            get => _finishTimeUtc;
             private set
             {
-                _finishTime = value;
+                _finishTimeUtc = value;
                 OnChanged();
                 OnChanged(nameof(DurationInSec));
             }
@@ -56,9 +56,9 @@ namespace ProxyMiner.Demo.ViewModels
         {
             get
             {
-                return (StartTimeUtc == null || FinishTime == null) 
+                return (StartTimeUtc == null || FinishTimeUtc == null) 
                     ? null
-                    : (FinishTime - StartTimeUtc).Value.Seconds;
+                    : (FinishTimeUtc - StartTimeUtc).Value.Seconds;
             }
         }
         
@@ -82,7 +82,7 @@ namespace ProxyMiner.Demo.ViewModels
                 return;
 
             StartTimeUtc = args.StartTimeUtc;
-            FinishTime = null;
+            FinishTimeUtc = null;
             TotalCount = null;
         }
 
@@ -91,7 +91,7 @@ namespace ProxyMiner.Demo.ViewModels
             if (args.Producer != _producer)
                 return;
 
-            FinishTime = args.FinishTime;
+            FinishTimeUtc = args.FinishTimeUtc;
             TotalCount = args.Proxies.Count();
         }
 
@@ -104,7 +104,7 @@ namespace ProxyMiner.Demo.ViewModels
         private readonly IProducerCollection _producers;
         
         private DateTime? _startTimeUtc;
-        private DateTime? _finishTime;
+        private DateTime? _finishTimeUtc;
         private int? _totalCount;
     }
 }

@@ -3,12 +3,12 @@
 /// <summary>
 ///     Monitors the settings file, when it is changed, reads the settings from the file.
 /// </summary>
-public sealed class SettingsFileWatcher : IDisposable
+internal sealed class SettingsFileWatcher : IDisposable
 {
-    public SettingsFileWatcher(ISettingsFileReader reader, SettingsApplier applier, string filename)
+    public SettingsFileWatcher(ISettingsFileReader reader, string filename, Action<Settings> applySettings)
     {
         _reader = reader;
-        _applier = applier;
+        _applySettings = applySettings;
 
         var folder = Path.GetDirectoryName(Path.GetFullPath(filename));
         if (!Directory.Exists(folder))
@@ -18,7 +18,7 @@ public sealed class SettingsFileWatcher : IDisposable
 
         if (_reader.TryRead(_filename, out var settings))
         {
-            _applier.Apply(settings!);
+            _applySettings(settings!);
         }
 
         _watcher = new FileSystemWatcher(folder)
@@ -44,12 +44,12 @@ public sealed class SettingsFileWatcher : IDisposable
     { 
         if (_reader.TryRead(_filename!, out var settings))
         {
-            _applier.Apply(settings!);
+            _applySettings(settings!);
         }
     }
 
     private readonly ISettingsFileReader _reader;
-    private readonly SettingsApplier _applier;
+    private readonly Action<Settings> _applySettings;
     private readonly FileSystemWatcher? _watcher;
     private readonly string? _filename;
 }

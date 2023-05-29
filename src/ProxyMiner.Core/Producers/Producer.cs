@@ -1,5 +1,8 @@
 ﻿namespace ProxyMiner.Core.Producers;
 
+/// <summary>
+///     Proxies producer.
+/// </summary>
 public sealed class Producer
 {
     public Producer(string name, IProxyProvider provider)
@@ -8,8 +11,14 @@ public sealed class Producer
         Provider = provider;
     }
 
+    /// <summary>
+    ///     Name of producer.
+    /// </summary>
     public string Name { get; set; }
 
+    /// <summary>
+    ///     A sign of the producer's availability.
+    /// </summary>
     public bool IsEnabled
     {
         get => _isEnabled;
@@ -23,8 +32,14 @@ public sealed class Producer
         }
     }
 
+    /// <summary>
+    ///     Provider of proxies.
+    /// </summary>
     public IProxyProvider Provider { get; }
 
+    /// <summary>
+    ///     Event about producer availability change.
+    /// </summary>
     public event EventHandler<EventArgs> EnabledChanged = (_, _) => { };
 
     private bool _isEnabled;

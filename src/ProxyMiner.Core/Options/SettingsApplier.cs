@@ -1,6 +1,6 @@
 ﻿namespace ProxyMiner.Core.Options;
 
-public sealed class SettingsApplier
+internal sealed class SettingsApplier
 {
     public SettingsApplier(Settings settings)
     {

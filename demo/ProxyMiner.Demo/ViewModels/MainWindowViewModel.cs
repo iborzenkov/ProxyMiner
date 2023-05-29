@@ -9,10 +9,9 @@ using System.Timers;
 using System.Windows.Input;
 using ProxyMiner.Checkers;
 using ProxyMiner.Core;
-using ProxyMiner.Core.Checkers;
 using ProxyMiner.Core.Filters;
 using ProxyMiner.Core.Models;
-using ProxyMiner.Core.Models.ProxyCollections;
+using ProxyMiner.Core.Models.BaseCollections;
 using ProxyMiner.Core.Options;
 using ProxyMiner.Core.Producers;
 using ProxyMiner.Providers;
@@ -33,14 +32,17 @@ namespace ProxyMiner.Demo.ViewModels
             _miner = new Miner(checker, _settingsProvider);
 
             _miner.Producers.CollectionChanged += SourceCollectionChanged;
-            _miner.Producers.Add(new Producer("Free-Proxy-List", new FreeProxyListProvider()));
-            _miner.Producers.Add(new Producer("proxies.txt", new CsvFileProvider("proxies.txt", CsvFileSettings.Default)));
-            _miner.Producers.Add(new Producer("brief.txt", new CsvFileProvider("brief.txt", CsvFileSettings.Default)));
-            _miner.Producers.Add(new Producer("all.csv", new CsvFileProvider("all.csv", CsvFileSettings.Default)));
-            _miner.Producers.Add(new Producer("valid.csv", new CsvFileProvider("valid.csv", CsvFileSettings.Default)));
-            _miner.Producers.Add(new Producer("anonimous.csv", new CsvFileProvider("anonimous.csv", CsvFileSettings.Default)));
-            _miner.Producers.Add(new Producer("GeoNode", new GeoNodeProvider()));
-            _miner.Producers.Add(new Producer("Dummy", new DummyProvider()));
+            _miner.Producers.AddRange(new[]
+            {
+                new Producer("Free-Proxy-List", new FreeProxyListProvider()),
+                new Producer("proxies.txt", new CsvFileProvider("proxies.txt", CsvFileSettings.Default)),
+                new Producer("brief.txt", new CsvFileProvider("brief.txt", CsvFileSettings.Default)),
+                new Producer("all.csv", new CsvFileProvider("all.csv", CsvFileSettings.Default)),
+                new Producer("valid.csv", new CsvFileProvider("valid.csv", CsvFileSettings.Default)),
+                new Producer("anonimous.csv", new CsvFileProvider("anonimous.csv", CsvFileSettings.Default)),
+                new Producer("GeoNode", new GeoNodeProvider()),
+                new Producer("Dummy", new DummyProvider())
+             });
 
             _miner.Proxies.CollectionChanged += ProxyCollectionChanged;
 
@@ -118,7 +120,7 @@ namespace ProxyMiner.Demo.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void SourceCollectionChanged(object? sender, EventArgs e)
+        private void SourceCollectionChanged(object? sender, CollectionChangedEventArgs<Producer> e)
         {
             foreach (var viewModel in Sources)
             {
@@ -133,7 +135,7 @@ namespace ProxyMiner.Demo.ViewModels
         private void ProxyCollectionChanged(object? sender, CollectionChangedEventArgs<Proxy> e)
         {
             var removedViewModels = new List<ProxyViewModel>();
-            if (e.Action == Core.Models.ProxyCollections.CollectionChangeAction.Remove && e.OldItems != null)
+            if (e.Action == Core.Models.BaseCollections.CollectionChangeAction.Remove && e.OldItems != null)
             {
                 foreach (var viewModel in Proxies.Where<ProxyViewModel>(vm => e.OldItems.Contains(vm.Proxy)))
                 {

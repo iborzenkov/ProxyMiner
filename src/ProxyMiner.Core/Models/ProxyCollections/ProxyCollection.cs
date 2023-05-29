@@ -1,14 +1,12 @@
 ﻿using System.Collections.Concurrent;
 using ProxyMiner.Core.Filters;
+using ProxyMiner.Core.Models.BaseCollections;
 
 namespace ProxyMiner.Core.Models.ProxyCollections;
 
 internal sealed class ProxyCollection : IProxyCollection
 {
-    public void Add(Proxy proxy)
-    {
-        AddRange(new[] { proxy });
-    }
+    public void Add(Proxy proxy) => AddRange(new[] { proxy });
 
     public void AddRange(IEnumerable<Proxy> proxies)
     {
@@ -27,10 +25,7 @@ internal sealed class ProxyCollection : IProxyCollection
         }
     }
 
-    public void Remove(Proxy proxy)
-    {
-        RemoveRange(new[] { proxy });
-    }
+    public void Remove(Proxy proxy) => RemoveRange(new[] { proxy });
 
     public void RemoveRange(IEnumerable<Proxy> proxies)
     {
@@ -62,7 +57,7 @@ internal sealed class ProxyCollection : IProxyCollection
         }
     }
 
-    private void OnCollectionChanged(CollectionChangedEventArgs<Proxy> args) 
+    private void OnCollectionChanged(CollectionChangedEventArgs<Proxy> args)
         => CollectionChanged.Invoke(this, args);
 
     private readonly ConcurrentDictionary<Proxy, ProxyState> _items = new();

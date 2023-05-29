@@ -9,7 +9,7 @@ public interface ISettingsFileReader
     ///     Read settings from file.
     /// </summary>
     /// <param name="fileName">File with settings.</param>
-    /// <param name="fileName">Read settings.</param>
+    /// <param name="settings">Read settings, if the reading is successful.</param>
     /// <returns>True if the file was read successfully.</returns>
     public bool TryRead(string fileName, out Settings? settings);
 }

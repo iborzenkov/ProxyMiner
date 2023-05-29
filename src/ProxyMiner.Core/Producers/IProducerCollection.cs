@@ -1,15 +1,19 @@
-﻿namespace ProxyMiner.Core.Producers;
+﻿using ProxyMiner.Core.Models.BaseCollections;
 
-public interface IProducerCollection
+namespace ProxyMiner.Core.Producers;
+
+/// <summary>
+///     Producer collection.
+/// </summary>
+public interface IProducerCollection : IBaseCollection<Producer>
 {
-    void Add(Producer producer);
-
-    void Remove(Producer producer);
-
-    IEnumerable<Producer> Items { get; }
-    
+    /// <summary>
+    ///     Event about the beginning of the proxy search in the source.
+    /// </summary>
     event EventHandler<ProxyMiningEventArgs> Mining;
-    event EventHandler<ProxyMinedEventArgs> Mined;
 
-    event EventHandler<EventArgs> CollectionChanged;
+    /// <summary>
+    ///     Event about the end of the proxy search in the source.
+    /// </summary>
+    event EventHandler<ProxyMinedEventArgs> Mined;
 }

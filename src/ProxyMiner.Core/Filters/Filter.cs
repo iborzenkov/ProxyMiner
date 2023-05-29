@@ -54,7 +54,7 @@ public sealed class Filter
     /// <summary>
     ///     Filter builder.
     /// </summary>
-    public class FilterBuilder
+    public sealed class FilterBuilder
     {
         public FilterBuilder Count(int value)
         {

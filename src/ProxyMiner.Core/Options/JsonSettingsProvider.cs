@@ -2,13 +2,16 @@ using System.Text.Json;
 
 namespace ProxyMiner.Core.Options;
 
+/// <summary>
+///     Settings provider from JSON-file.
+/// </summary>
 public sealed class JsonSettingsProvider : ISettingsProvider, IDisposable
 {
     public JsonSettingsProvider(string filename)
     {
         var settingsReader = new JsonReader();
         var settingsApplier = new SettingsApplier(Settings);
-        _settingsWatcher = new SettingsFileWatcher(settingsReader, settingsApplier, filename);
+        _settingsWatcher = new SettingsFileWatcher(settingsReader, filename, settings => settingsApplier.Apply(settings));
     }
     
     public void Dispose()
