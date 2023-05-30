@@ -6,10 +6,10 @@ namespace ProxyMiner.Core;
 /// <summary>
 ///     Miner factory.
 /// </summary>
-public class MinerFactory
+public sealed class MinerFactory
 {
     /// <summary>
-    ///     Creates a IMiner.
+    ///     Creates an IMiner.
     /// </summary>
     /// <param name="checker">Proxy checker.</param>
     /// <param name="settingsProvider">Provider of the settings.</param>
