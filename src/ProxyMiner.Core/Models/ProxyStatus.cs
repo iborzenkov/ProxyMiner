@@ -25,9 +25,14 @@ public sealed record ProxyStatus
     public static ProxyStatus Anonimous => new() { Status = HttpStatusCode.OK, IsAnonimous = true };
 
     /// <summary>
-    ///     Creates a proxy status with the sign "verification canceled".
+    ///     Creates a proxy status with the sign "verification canceled by user".
     /// </summary>
     public static ProxyStatus Cancelled => new() { IsCancelled = true };
+
+    /// <summary>
+    ///     Creates a proxy status with the sign "verification canceled by timeout".
+    /// </summary>
+    public static ProxyStatus Timeout => new() { IsTimeout = true };
 
     /// <summary>
     ///     Status code, when connecting via proxy.
@@ -40,20 +45,28 @@ public sealed record ProxyStatus
     public bool IsAnonimous { get; init; }
 
     /// <summary>
-    ///     Indicates that the proxy check has been canceled.
+    ///     Indicates that the proxy check has been canceled by user.
     /// </summary>
     public bool IsCancelled { get; init; }
+
+    /// <summary>
+    ///     Indicates that the proxy check has been canceled by timeout.
+    /// </summary>
+    public bool IsTimeout { get; init; }    
 
     /// <summary>
     ///     A sign that the proxy is alive.
     /// </summary>
     /// <remarks>It does not say that the proxy is anonymous or not anonymous.</remarks>
-    public bool IsValid => !IsCancelled && Status == HttpStatusCode.OK;
+    public bool IsValid => !IsCancelled && !IsTimeout && Status == HttpStatusCode.OK;
 
     public override string ToString()
     {
         if (IsCancelled)
             return "Cancelled";
+
+        if (IsTimeout)
+            return "Timeout";
 
         if (Status != HttpStatusCode.OK)
             return Status.ToString();

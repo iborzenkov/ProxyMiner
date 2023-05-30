@@ -20,6 +20,7 @@ public sealed class Checker : IChecker
     {
         return Task.Run(async () =>
         {
+            token.ThrowIfCancellationRequested();
             var webProxy = new WebProxy
             {
                 Address = proxy.Uri,

@@ -21,11 +21,11 @@ public class FilterTest
     public void Filter_Count_CollectionHaveMoreElements()
     {
         var proxies = RegularProxis;
-        var filter = Filter.Builder.Count(5).Build();
+        var filter = Filter.Builder.Count(6).Build();
         
         var filtered = new FilterApplier(proxies).Apply(filter);
 
-        CollectionAssert.AreEqual(new[] { Proxy1, Proxy2, Proxy3, Proxy4 }, filtered);
+        CollectionAssert.AreEqual(new[] { Proxy1, Proxy2, Proxy3, Proxy4, Proxy6 }, filtered);
     }
     
     [TestMethod]
@@ -80,7 +80,7 @@ public class FilterTest
         
         var filtered = new FilterApplier(proxies).Apply(filter);
 
-        CollectionAssert.AreEqual(new[] { Proxy2 }, filtered);
+        CollectionAssert.AreEqual(new[] { Proxy2, Proxy6 }, filtered);
     }
 
     [TestMethod]
@@ -102,7 +102,7 @@ public class FilterTest
         
         var filtered = new FilterApplier(proxies).Apply(filter);
 
-        CollectionAssert.AreEqual(new[] { Proxy2, Proxy3 }, filtered);
+        CollectionAssert.AreEqual(new[] { Proxy2, Proxy3, Proxy6 }, filtered);
     }
 
     [TestMethod]
@@ -113,14 +113,14 @@ public class FilterTest
         
         var filtered = new FilterApplier(proxies).Apply(filter);
 
-        CollectionAssert.AreEqual(new[] { Proxy2, Proxy4 }, filtered);
+        CollectionAssert.AreEqual(new[] { Proxy2, Proxy4, Proxy6 }, filtered);
     }
 
     [TestMethod]
     public void Filter_Except_All()
     {
         var proxies = RegularProxis;
-        var filter = Filter.Builder.Except(new [] { Proxy1, Proxy2, Proxy3, Proxy4 } ).Build();
+        var filter = Filter.Builder.Except(new [] { Proxy1, Proxy2, Proxy3, Proxy4, Proxy6 } ).Build();
         
         var filtered = new FilterApplier(proxies).Apply(filter);
 
@@ -135,7 +135,7 @@ public class FilterTest
         
         var filtered = new FilterApplier(proxies).Apply(filter);
 
-        CollectionAssert.AreEqual(new[] { Proxy5, Proxy1, Proxy2, Proxy3, Proxy4 }, filtered);
+        CollectionAssert.AreEqual(new[] { Proxy5, Proxy1, Proxy2, Proxy3, Proxy4, Proxy6 }, filtered);
     }
 
     [TestMethod]
@@ -146,7 +146,7 @@ public class FilterTest
         
         var filtered = new FilterApplier(proxies).Apply(filter);
 
-        CollectionAssert.AreEqual(new[] { Proxy4, Proxy2, Proxy1, Proxy3 }, filtered);
+        CollectionAssert.AreEqual(new[] { Proxy6, Proxy4, Proxy2, Proxy1, Proxy3 }, filtered);
     }
 
     [TestMethod]
@@ -158,7 +158,7 @@ public class FilterTest
         
         var filtered = new FilterApplier(proxies).Apply(filter);
 
-        CollectionAssert.AreEqual(new[] { Proxy3, Proxy1, Proxy2, Proxy4 }, filtered);
+        CollectionAssert.AreEqual(new[] { Proxy3, Proxy1, Proxy2, Proxy4, Proxy6 }, filtered);
     }
 
     private static readonly Proxy Proxy1 = new(ProxyType.Http, "1.1.1.1", 1111);
@@ -166,12 +166,14 @@ public class FilterTest
     private static readonly Proxy Proxy3 = new(ProxyType.Socks5, "3.3.3.3", 3333);
     private static readonly Proxy Proxy4 = new(ProxyType.Http, "4.4.4.4", 4444);
     private static readonly Proxy Proxy5 = new(ProxyType.Socks4, "5.5.5.5", 5555);
-    
+    private static readonly Proxy Proxy6 = new(ProxyType.Socks5, "6.6.6.6", 6666);
+
     private static readonly Dictionary<Proxy, ProxyState> RegularProxis = new()
     {
         { Proxy1, new ProxyState(new DateTime(2023, 1, 25), new DateTime(2023, 1, 26), ProxyStatus.Anonimous) },
         { Proxy2, new ProxyState(new DateTime(2023, 1, 23), new DateTime(2023, 1, 24), ProxyStatus.Cancelled) },
         { Proxy3, new ProxyState(new DateTime(2023, 1, 27), new DateTime(2023, 1, 28), ProxyStatus.NotAnonimous) },
         { Proxy4, new ProxyState(new DateTime(2023, 1, 21), new DateTime(2023, 1, 22), ProxyStatus.Anonimous) },
+        { Proxy6, new ProxyState(new DateTime(2023, 1, 19), new DateTime(2023, 1, 20), ProxyStatus.Timeout) },
     };
 }

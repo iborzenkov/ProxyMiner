@@ -12,7 +12,7 @@ public sealed class DummyProvider : IProxyProvider
     
     public DummyProvider(IEnumerable<Proxy> proxies) => _proxies = proxies;
     
-    public Task<IEnumerable<Proxy>> GetProxies(CancellationToken token)
+    public Task<ProxyProviderResult> GetProxies(CancellationToken token)
     {
         return Task.Run(() =>
             {
@@ -20,7 +20,7 @@ public sealed class DummyProvider : IProxyProvider
                 
                 token.ThrowIfCancellationRequested();
 
-                return Task.FromResult(_proxies);
+                return Task.FromResult(ProxyProviderResult.Ok(_proxies));
             },
             token);
     }

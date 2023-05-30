@@ -9,7 +9,7 @@ namespace ProxyMiner.Providers.GeoNode;
 /// </summary>
 public sealed class GeoNodeProvider : IProxyProvider
 {
-    public Task<IEnumerable<Proxy>> GetProxies(CancellationToken token)
+    public Task<ProxyProviderResult> GetProxies(CancellationToken token)
     {
         return Task.Run(async () =>
             {
@@ -37,7 +37,7 @@ public sealed class GeoNodeProvider : IProxyProvider
                     page++;
                 } while (true);
 
-                return proxies
+                return ProxyProviderResult.Ok(proxies
                     .Where(r => (r.PortAsNumber != null 
                         && !string.IsNullOrEmpty(r.Ip)
                         && r.Type == GeoNodeProxyTypes.Elite) || r.Type == GeoNodeProxyTypes.Anonymous)
@@ -45,7 +45,7 @@ public sealed class GeoNodeProvider : IProxyProvider
                         new Proxy(
                             r.ProxyType!.Value,
                             r.Ip!,
-                            r.PortAsNumber!.Value));
+                            r.PortAsNumber!.Value)));
 
                 async Task<string> LoadContent(string url, CancellationToken ct)
                 {

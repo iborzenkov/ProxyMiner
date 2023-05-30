@@ -39,6 +39,8 @@
                         <DataGridTextColumn Binding="{Binding DurationInSec, Mode=OneWay}" Header="Duration, sec" />
                         <DataGridTextColumn Binding="{Binding TotalCount}" Header="Total count" />
                         <DataGridTextColumn Binding="{Binding ValidCount}" Header="Valid count" />
+                        <DataGridTextColumn Binding="{Binding ResultCode}" Header="Result" />
+                        <DataGridTextColumn Binding="{Binding ErrorMessage}" Header="Error message" />
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Orientation="Horizontal">

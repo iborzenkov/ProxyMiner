@@ -63,13 +63,33 @@ namespace ProxyMiner.Demo.ViewModels
         }
         
         public int? TotalCount 
-        { 
+        {
             get => _totalCount;
             private set
             {
                 _totalCount = value;
                 OnChanged();
-            } 
+            }
+        }
+
+        public ProxyProviderResultCode? ResultCode
+        {
+            get => _resultCode;
+            private set
+            {
+                _resultCode = value;
+                OnChanged();
+            }
+        }
+
+        public string? ErrorMessage
+        {
+            get => _errorMessage;
+            private set
+            {
+                _errorMessage = value;
+                OnChanged();
+            }
         }
 
         public int? ValidCount => null;
@@ -84,6 +104,8 @@ namespace ProxyMiner.Demo.ViewModels
             StartTimeUtc = args.StartTimeUtc;
             FinishTimeUtc = null;
             TotalCount = null;
+            ResultCode = null;
+            ErrorMessage = null;
         }
 
         private void ProxyMined(object? sender, ProxyMinedEventArgs args)
@@ -92,7 +114,13 @@ namespace ProxyMiner.Demo.ViewModels
                 return;
 
             FinishTimeUtc = args.FinishTimeUtc;
-            TotalCount = args.Proxies.Count();
+            TotalCount = args.MiningResult.Proxies.Count();
+            ResultCode = args.MiningResult.Code;
+            ErrorMessage = args.MiningResult.Code == ProxyProviderResultCode.Custom
+                ? args.MiningResult.CustomMessage
+                : args.MiningResult.Code == ProxyProviderResultCode.Error
+                    ? args.MiningResult.Exception!.Message
+                    : null;
         }
 
         private void OnChanged([CallerMemberName] string propertyName = "")
@@ -106,5 +134,7 @@ namespace ProxyMiner.Demo.ViewModels
         private DateTime? _startTimeUtc;
         private DateTime? _finishTimeUtc;
         private int? _totalCount;
+        private ProxyProviderResultCode? _resultCode;
+        private string? _errorMessage;
     }
 }

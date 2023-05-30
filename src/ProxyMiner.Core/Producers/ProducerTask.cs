@@ -10,7 +10,7 @@ internal sealed class ProducerTask : IDisposable
     public ProducerTask(
         Producer producer, Settings settings, 
         Action<Producer, DateTime> miningStart,
-        Action<Producer, DateTime, IEnumerable<Proxy>> miningFinished)
+        Action<Producer, DateTime, ProxyProviderResult> miningFinished)
     {
         _producer = producer;
         _settings = settings;
@@ -77,17 +77,31 @@ internal sealed class ProducerTask : IDisposable
 
         var proxies = new List<Proxy>();
         _miningStart(_producer, startTimeUtc);
+
+        ProxyProviderResult result = ProxyProviderResult.Unknown;
         try
         {
-            proxies.AddRange(await _producer.Provider.GetProxies(linkedTokenSource.Token));
+            result = await _producer.Provider.GetProxies(linkedTokenSource.Token);
+            if (result.Code == ProxyProviderResultCode.Ok)
+            {
+                proxies.AddRange(result.Proxies);
+            }
 
             _timer?.Start();
         }
-        catch (TaskCanceledException) { }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException) 
+        {
+            result = timeoutTokenSource.IsCancellationRequested
+                ? ProxyProviderResult.Timeout
+                : ProxyProviderResult.Cancelled;
+        }
+        catch (Exception exception)
+        {
+            result = ProxyProviderResult.Error(exception);
+        }
         finally
         {
-            _miningFinished(_producer, DateTime.UtcNow, proxies);
+            _miningFinished(_producer, DateTime.UtcNow, result);
         }
     }
 
@@ -102,7 +116,7 @@ internal sealed class ProducerTask : IDisposable
     private readonly Producer _producer;
     private readonly Settings _settings;
     private readonly Action<Producer, DateTime> _miningStart;
-    private readonly Action<Producer, DateTime, IEnumerable<Proxy>> _miningFinished;
+    private readonly Action<Producer, DateTime, ProxyProviderResult> _miningFinished;
 
     private Timer? _timer;
     private bool _timerInited;

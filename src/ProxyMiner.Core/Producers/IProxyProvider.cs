@@ -1,6 +1,4 @@
-﻿using ProxyMiner.Core.Models;
-
-namespace ProxyMiner.Core.Producers;
+﻿namespace ProxyMiner.Core.Producers;
 
 /// <summary>
 ///     Provider of a proxies list.
@@ -12,5 +10,5 @@ public interface IProxyProvider
     /// </summary>
     /// <param name="token">The cancellation token to cancel the operation.</param>
     /// <returns>Proxy list.</returns>
-    Task<IEnumerable<Proxy>> GetProxies(CancellationToken token);
+    Task<ProxyProviderResult> GetProxies(CancellationToken token);
 }

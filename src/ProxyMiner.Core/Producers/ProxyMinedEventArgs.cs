@@ -7,11 +7,11 @@ namespace ProxyMiner.Core.Producers;
 /// </summary>
 public sealed class ProxyMinedEventArgs : EventArgs
 {
-    public ProxyMinedEventArgs(Producer producer, DateTime finishTimeUtc, IEnumerable<Proxy> proxies)
+    public ProxyMinedEventArgs(Producer producer, DateTime finishTimeUtc, ProxyProviderResult miningResult)
     {
         Producer = producer;
         FinishTimeUtc = finishTimeUtc;
-        Proxies = proxies;
+        MiningResult = miningResult;
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ public sealed class ProxyMinedEventArgs : EventArgs
     public DateTime FinishTimeUtc { get; }
 
     /// <summary>
-    ///     The collection of found proxies.
+    ///     Result of the mining.
     /// </summary>
-    public IEnumerable<Proxy> Proxies { get; }
+    public ProxyProviderResult MiningResult { get; }
 }

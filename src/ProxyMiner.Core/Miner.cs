@@ -47,7 +47,10 @@ public sealed class Miner : IMiner, IDisposable
 
     private void ProxiesMined(object? sender, ProxyMinedEventArgs e)
     {
-        _proxies.AddRange(e.Proxies);
+        if (e.MiningResult.Code == ProxyProviderResultCode.Ok)
+        {
+            _proxies.AddRange(e.MiningResult.Proxies);
+        }
     }
 
     private readonly ProducerCollection _producers;

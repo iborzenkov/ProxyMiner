@@ -39,8 +39,8 @@ internal sealed class ProducerCollection : IProducerCollection
 
         void SessionStart(Producer source, DateTime startTimeUtc)
             => Mining.Invoke(this, new ProxyMiningEventArgs(source, startTimeUtc));
-        void SessionDone(Producer source, DateTime finishTime, IEnumerable<Proxy> proxies)
-            => Mined.Invoke(this, new ProxyMinedEventArgs(source, finishTime, proxies));
+        void SessionDone(Producer source, DateTime finishTime, ProxyProviderResult sessionResult)
+            => Mined.Invoke(this, new ProxyMinedEventArgs(source, finishTime, sessionResult));
     }
 
 

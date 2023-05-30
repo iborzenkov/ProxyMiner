@@ -14,12 +14,12 @@ public sealed class CsvFileProvider : IProxyProvider
         _settings = settings;
     }
 
-    public Task<IEnumerable<Proxy>> GetProxies(CancellationToken token)
+    public Task<ProxyProviderResult> GetProxies(CancellationToken token)
     {
         return File.Exists(_filename)
-            ? Task.Run<IEnumerable<Proxy>>(() =>
+            ? Task.Run<ProxyProviderResult>(() =>
                 {
-                    var result = new List<Proxy>();
+                    var proxies = new List<Proxy>();
                     foreach (var line in File.ReadLines(_filename))
                     {
                         token.ThrowIfCancellationRequested();
@@ -38,7 +38,7 @@ public sealed class CsvFileProvider : IProxyProvider
                                 ? null
                                 : parts[_settings.PasswordColumn.Value];
 
-                            result.Add(new Proxy(type, host, port, username, password));
+                            proxies.Add(new Proxy(type, host, port, username, password));
                         }
                         catch
                         {
@@ -46,10 +46,10 @@ public sealed class CsvFileProvider : IProxyProvider
                         }
                     }
 
-                    return result;
+                    return ProxyProviderResult.Ok(proxies);
                 },
                 token)
-            : Task.FromResult(Enumerable.Empty<Proxy>());
+            : Task.FromResult(ProxyProviderResult.Error(new FileNotFoundException($"File '{_filename}' not found")));
     }
 
     private ProxyType GetProxyType(string proxyTypeAsString)

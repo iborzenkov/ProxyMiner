@@ -10,7 +10,7 @@ namespace ProxyMiner.Providers.FreeProxyList;
 /// </summary>
 public sealed class FreeProxyListProvider : IProxyProvider
 {
-    public Task<IEnumerable<Proxy>> GetProxies(CancellationToken token)
+    public Task<ProxyProviderResult> GetProxies(CancellationToken token)
     {
         return Task.Run(async () =>
             {
@@ -31,9 +31,9 @@ public sealed class FreeProxyListProvider : IProxyProvider
                     })
                     .Where(s => s is { Port: not null, Ip: not null });
 
-                return rows
+                return ProxyProviderResult.Ok(rows
                     .Where(r => r.Type is FreeProxyTypes.Elite or FreeProxyTypes.Anonymous)
-                    .Select(r => new Proxy(ProxyType.Http, r.Ip!, r.Port!.Value));
+                    .Select(r => new Proxy(ProxyType.Http, r.Ip!, r.Port!.Value)));
             },
             token);
     }

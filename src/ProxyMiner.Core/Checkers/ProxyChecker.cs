@@ -61,16 +61,17 @@ internal sealed class ProxyChecker : IDisposable
                             _observers.ForEach(o => o.Checked(
                                 new ProxyCheckedEventArgs(proxy, new ProxyState(startDate, DateTime.UtcNow, status))));
                         }
-                        catch (TaskCanceledException)
+                        catch (OperationCanceledException)
                         {
+                            var status = timeoutTokenSource.IsCancellationRequested
+                                ? ProxyStatus.Timeout
+                                : ProxyStatus.Cancelled;
                             _observers.ForEach(o => o.Checked(
-                                new ProxyCheckedEventArgs(proxy, new ProxyState(startDate, DateTime.UtcNow, ProxyStatus.Cancelled))));
-                            if (_commonTokenSource.IsCancellationRequested)
-                                throw;
+                                new ProxyCheckedEventArgs(proxy, new ProxyState(startDate, DateTime.UtcNow, status))));
                         }
                     }
                 }
-                catch (TaskCanceledException)
+                catch (OperationCanceledException)
                 {
                     // ignored
                 }
@@ -104,6 +105,9 @@ internal sealed class ProxyChecker : IDisposable
         {
             foreach (var proxy in proxies)
             {
+                if (_commonTokenSource!.IsCancellationRequested)
+                    break;
+
                 _proxies!.TryAdd(proxy, Timeout.Infinite, _commonTokenSource!.Token);
             }
         }
