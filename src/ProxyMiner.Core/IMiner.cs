@@ -4,7 +4,7 @@ using ProxyMiner.Core.Producers;
 
 namespace ProxyMiner.Core;
 
-public interface IMiner
+public interface IMiner : IDisposable
 {
     /// <summary>
     ///     Start mining.

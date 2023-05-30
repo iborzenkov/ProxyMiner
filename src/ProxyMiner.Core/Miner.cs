@@ -5,7 +5,7 @@ using ProxyMiner.Core.Producers;
 
 namespace ProxyMiner.Core;
 
-public sealed class Miner : IMiner, IDisposable
+internal sealed class Miner : IMiner
 {
     public Miner(IChecker checker, ISettingsProvider settingsProvider)
     {

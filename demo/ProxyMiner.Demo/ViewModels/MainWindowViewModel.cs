@@ -29,7 +29,7 @@ namespace ProxyMiner.Demo.ViewModels
             var checker = new Checker();
             _settingsProvider = new JsonSettingsProvider("options.json");
             
-            _miner = new Miner(checker, _settingsProvider);
+            _miner = MinerFactory.GetMiner(checker, _settingsProvider);
 
             _miner.Producers.CollectionChanged += SourceCollectionChanged;
             _miner.Producers.AddRange(new[]
