@@ -47,7 +47,7 @@ internal sealed class FilterApplier
         foreach (var proxy in proxies)
         {
             var state = _proxyWithState[proxy];
-            if (state.FinishTimeUtc == null)
+            if (state.FinishTimeUtc == null || (state.Status != null && state.Status.IsCancelled))
             {
                 result.Add(proxy);
             }
