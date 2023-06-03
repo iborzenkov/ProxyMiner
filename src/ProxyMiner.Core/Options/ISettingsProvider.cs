@@ -3,7 +3,7 @@ namespace ProxyMiner.Core.Options;
 /// <summary>
 ///     Settings provider.
 /// </summary>
-public interface ISettingsProvider
+public interface ISettingsProvider : IDisposable
 {
     /// <summary>
     ///     Settings.

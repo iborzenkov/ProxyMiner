@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using ProxyMiner.Core.Models;
 using ProxyMiner.Core.Models.BaseCollections;
 using ProxyMiner.Core.Options;
 
@@ -16,8 +15,11 @@ internal sealed class ProducerCollection : IProducerCollection
 
     public void AddRange(IEnumerable<Producer> producers)
     {
+        if (producers == null)
+            return;
+
         var addedItems = new List<Producer>();
-        foreach (var producer in producers)
+        foreach (var producer in producers.Where(p => p != null).ToList())
         {
             if (_items.ContainsKey(producer))
                 continue;
@@ -48,8 +50,11 @@ internal sealed class ProducerCollection : IProducerCollection
 
     public void RemoveRange(IEnumerable<Producer> producers)
     {
+        if (producers == null)
+            return;
+
         var removedItems = new List<Producer>();
-        foreach (var producer in producers)
+        foreach (var producer in producers.Where(p => p != null))
         {
             if (!_items.TryRemove(producer, out var sourceTask))
                 continue;
@@ -70,7 +75,7 @@ internal sealed class ProducerCollection : IProducerCollection
 
     public IEnumerable<Producer> Items => _items.Keys;
 
-    public void Start()
+    internal void Start()
     {
         if (_isActive)
             return;
@@ -83,7 +88,7 @@ internal sealed class ProducerCollection : IProducerCollection
         }
     }
 
-    public void Stop()
+    internal void Stop()
     {
         if (!_isActive)
             return;

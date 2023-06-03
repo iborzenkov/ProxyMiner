@@ -5,7 +5,7 @@ namespace ProxyMiner.Core.Options;
 /// <summary>
 ///     Settings provider from JSON-file.
 /// </summary>
-public sealed class JsonSettingsProvider : ISettingsProvider, IDisposable
+public sealed class JsonSettingsProvider : ISettingsProvider
 {
     public JsonSettingsProvider(string filename)
     {

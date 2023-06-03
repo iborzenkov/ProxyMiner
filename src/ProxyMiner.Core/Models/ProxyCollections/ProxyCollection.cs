@@ -10,8 +10,11 @@ internal sealed class ProxyCollection : IProxyCollection
 
     public void AddRange(IEnumerable<Proxy> proxies)
     {
+        if (proxies == null)
+            return;
+
         var addedItems = new List<Proxy>();
-        foreach (var proxy in proxies.ToList())
+        foreach (var proxy in proxies.Where(p => p != null).ToList())
         {
             if (!_items.ContainsKey(proxy) && _items.TryAdd(proxy, ProxyState.NotDefined))
             {
@@ -29,7 +32,10 @@ internal sealed class ProxyCollection : IProxyCollection
 
     public void RemoveRange(IEnumerable<Proxy> proxies)
     {
-        var removedItems = proxies.Where(proxy => _items.TryRemove(proxy, out _)).ToList();
+        if (proxies == null)
+            return;
+
+        var removedItems = proxies.Where(proxy => proxy != null && _items.TryRemove(proxy, out _)).ToList();
 
         if (removedItems.Any())
         {
