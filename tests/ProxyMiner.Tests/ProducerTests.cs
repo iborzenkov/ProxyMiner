@@ -1,4 +1,6 @@
-using System.Xml;
+// ReSharper disable InconsistentNaming
+
+using System.Collections.Concurrent;
 using Moq;
 using ProxyMiner.Core.Models;
 using ProxyMiner.Core.Models.BaseCollections;
@@ -12,14 +14,14 @@ public class ProducerTests : ProxyMinerTestsBase
     [TestMethod]
     public void ProducerCollection_ByDefault_Empty()
     {
-        Assert.IsNotNull(Miner.Producers?.Items);
+        Assert.IsNotNull(Miner.Producers.Items);
         Assert.IsFalse(Miner.Producers.Items.Any());
     }
 
     [TestMethod]
     public void ProducerCollection_Add_Null()
     {
-        Miner.Producers.Add(item: null);
+        Miner.Producers.Add(item: null!);
 
         Assert.IsFalse(Miner.Producers.Items.Any());
     }
@@ -27,7 +29,7 @@ public class ProducerTests : ProxyMinerTestsBase
     [TestMethod]
     public void ProducerCollection_AddRange_Null()
     {
-        Miner.Producers.AddRange(items: null);
+        Miner.Producers.AddRange(items: null!);
 
         Assert.IsFalse(Miner.Producers.Items.Any());
     }
@@ -35,7 +37,7 @@ public class ProducerTests : ProxyMinerTestsBase
     [TestMethod]
     public void ProducerCollection_Remove_Null()
     {
-        Miner.Producers.Remove(item: null);
+        Miner.Producers.Remove(item: null!);
 
         Assert.IsFalse(Miner.Producers.Items.Any());
     }
@@ -43,7 +45,7 @@ public class ProducerTests : ProxyMinerTestsBase
     [TestMethod]
     public void ProducerCollection_RemoveRange_Null()
     {
-        Miner.Producers.RemoveRange(items: null);
+        Miner.Producers.RemoveRange(items: null!);
 
         Assert.IsFalse(Miner.Producers.Items.Any());
     }
@@ -79,6 +81,7 @@ public class ProducerTests : ProxyMinerTestsBase
         void Producers_CollectionChanged_Add(object? sender, CollectionChangedEventArgs<Producer> e)
         {
             Assert.AreEqual(CollectionChangeAction.Add, e.Action);
+            Assert.IsNotNull(e.NewItems);
             CollectionAssert.AreEquivalent(new[] { producer }, e.NewItems.ToArray());
             Assert.IsNull(e.OldItems);
         }
@@ -86,6 +89,7 @@ public class ProducerTests : ProxyMinerTestsBase
         void Producers_CollectionChanged_Remove(object? sender, CollectionChangedEventArgs<Producer> e)
         {
             Assert.AreEqual(CollectionChangeAction.Remove, e.Action);
+            Assert.IsNotNull(e.OldItems);
             CollectionAssert.AreEquivalent(new[] { producer }, e.OldItems.ToArray());
             Assert.IsNull(e.NewItems);
         }
@@ -101,7 +105,7 @@ public class ProducerTests : ProxyMinerTestsBase
         Miner.Producers.CollectionChanged += Producers_CollectionChanged_Add;
         try
         {
-            Miner.Producers.AddRange(new[] { producer1, null, producer2, producer3, null });
+            Miner.Producers.AddRange(new[] { producer1, null!, producer2, producer3, null! });
             CollectionAssert.AreEquivalent(new[] { producer1, producer2, producer3 }, Miner.Producers.Items.ToArray());
         }
         finally
@@ -112,7 +116,7 @@ public class ProducerTests : ProxyMinerTestsBase
         Miner.Producers.CollectionChanged += Producers_CollectionChanged_Remove;
         try
         {
-            Miner.Producers.RemoveRange(new[] { producer1, producer3, null });
+            Miner.Producers.RemoveRange(new[] { producer1, producer3, null! });
             CollectionAssert.AreEquivalent(new[] { producer2 }, Miner.Producers.Items.ToArray());
         }
         finally
@@ -123,6 +127,7 @@ public class ProducerTests : ProxyMinerTestsBase
         void Producers_CollectionChanged_Add(object? sender, CollectionChangedEventArgs<Producer> e)
         {
             Assert.AreEqual(CollectionChangeAction.Add, e.Action);
+            Assert.IsNotNull(e.NewItems);
             CollectionAssert.AreEquivalent(new[] { producer1, producer2, producer3 }, e.NewItems.ToArray());
             Assert.IsNull(e.OldItems);
         }
@@ -130,6 +135,7 @@ public class ProducerTests : ProxyMinerTestsBase
         void Producers_CollectionChanged_Remove(object? sender, CollectionChangedEventArgs<Producer> e)
         {
             Assert.AreEqual(CollectionChangeAction.Remove, e.Action);
+            Assert.IsNotNull(e.OldItems);
             CollectionAssert.AreEquivalent(new[] { producer1, producer3 }, e.OldItems.ToArray());
             Assert.IsNull(e.NewItems);
         }
@@ -142,8 +148,8 @@ public class ProducerTests : ProxyMinerTestsBase
         var producer2 = new Producer("TestProducer2", GetProvider()) { IsEnabled = true };
         var producer3 = new Producer("TestProducer2", GetProvider()) { IsEnabled = true };
 
-        var miningProducers = new List<Producer>();
-        var minedProducers = new List<Producer>();
+        var miningProducers = new ConcurrentBag<Producer>();
+        var minedProducers = new ConcurrentBag<Producer>();
         ProxyProviderResultCode? code = null;
 
         Miner.Producers.Mining += Producers_Mining;
@@ -181,8 +187,8 @@ public class ProducerTests : ProxyMinerTestsBase
     {
         var producer1 = new Producer("TestProducer1", GetProvider());
 
-        var miningProducers = new List<Producer>();
-        var minedProducers = new List<Producer>();
+        var miningProducers = new ConcurrentBag<Producer>();
+        var minedProducers = new ConcurrentBag<Producer>();
 
         Miner.Producers.Mining += Producers_Mining;
         Miner.Producers.Mined += Producers_Mined;
@@ -217,8 +223,8 @@ public class ProducerTests : ProxyMinerTestsBase
     {
         var producer = new Producer("TestProducer1", GetProvider());
 
-        var miningProducers = new List<Producer>();
-        var minedProducers = new List<Producer>();
+        var miningProducers = new ConcurrentBag<Producer>();
+        var minedProducers = new ConcurrentBag<Producer>();
         ProxyProviderResultCode? code = null;
 
         Miner.Producers.Mining += Producers_Mining;
@@ -261,8 +267,8 @@ public class ProducerTests : ProxyMinerTestsBase
     {
         var producer = new Producer("TestProducer1", GetSlowProvider()) { IsEnabled = true };
 
-        var miningProducers = new List<Producer>();
-        var minedProducers = new List<Producer>();
+        var miningProducers = new ConcurrentBag<Producer>();
+        var minedProducers = new ConcurrentBag<Producer>();
         ProxyProviderResultCode? code = null;
 
         Miner.Producers.Mining += Producers_Mining;

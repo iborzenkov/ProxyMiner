@@ -8,8 +8,7 @@ namespace ProxyMiner.Tests;
 
 public abstract class ProxyMinerTestsBase
 {
-    [TestInitialize]
-    public virtual void Initialize()
+    protected ProxyMinerTestsBase()
     {
         Miner = MinerFactory.GetMiner(Checker, SettingsProvider);
     }
@@ -25,16 +24,6 @@ public abstract class ProxyMinerTestsBase
     protected IChecker Checker => _checker ??= GetChecker();
 
     protected ISettingsProvider SettingsProvider => _settingsProvider ??= GetSettingsProvider();
-
-
-    protected virtual ISettingsProvider GetSettingsProvider()
-    {
-        var settingsMock = new Mock<ISettingsProvider>();
-        settingsMock.Setup(p => p.Settings)
-            .Returns(GetMockedSettings());
-        
-        return settingsMock.Object;
-    }
 
     protected virtual Settings GetMockedSettings()
     {
@@ -62,6 +51,15 @@ public abstract class ProxyMinerTestsBase
     protected virtual Task<ProxyStatus> GetCheck()
     {
         return Task.FromResult(ProxyStatus.Anonimous);
+    }
+
+    private ISettingsProvider GetSettingsProvider()
+    {
+        var settingsMock = new Mock<ISettingsProvider>();
+        settingsMock.Setup(p => p.Settings)
+            .Returns(GetMockedSettings());
+        
+        return settingsMock.Object;
     }
 
     private IChecker? _checker;

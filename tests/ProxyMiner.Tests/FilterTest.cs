@@ -161,12 +161,15 @@ public class FilterTest
         CollectionAssert.AreEqual(new[] { Proxy3, Proxy1, Proxy2, Proxy4, Proxy6 }, filtered);
     }
 
-    private static readonly Proxy Proxy1 = new(ProxyType.Http, "1.1.1.1", 1111);
-    private static readonly Proxy Proxy2 = new(ProxyType.Socks4, "2.2.2.2", 2222);
-    private static readonly Proxy Proxy3 = new(ProxyType.Socks5, "3.3.3.3", 3333);
-    private static readonly Proxy Proxy4 = new(ProxyType.Http, "4.4.4.4", 4444);
-    private static readonly Proxy Proxy5 = new(ProxyType.Socks4, "5.5.5.5", 5555);
-    private static readonly Proxy Proxy6 = new(ProxyType.Socks5, "6.6.6.6", 6666);
+    private static readonly Proxy Proxy1 = MakeProxy(ProxyType.Http, "1.1.1.1", 1111);
+    private static readonly Proxy Proxy2 = MakeProxy(ProxyType.Socks4, "2.2.2.2", 2222);
+    private static readonly Proxy Proxy3 = MakeProxy(ProxyType.Socks5, "3.3.3.3", 3333);
+    private static readonly Proxy Proxy4 = MakeProxy(ProxyType.Http, "4.4.4.4", 4444);
+    private static readonly Proxy Proxy5 = MakeProxy(ProxyType.Socks4, "5.5.5.5", 5555);
+    private static readonly Proxy Proxy6 = MakeProxy(ProxyType.Socks5, "6.6.6.6", 6666);
+
+    private static Proxy MakeProxy(ProxyType type, string host, int port)
+        => Proxy.Factory.TryMakeProxy(type, host, port).Item1!;
 
     private static readonly Dictionary<Proxy, ProxyState> RegularProxis = new()
     {

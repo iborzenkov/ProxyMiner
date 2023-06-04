@@ -1,39 +1,26 @@
-﻿namespace ProxyMiner.Core.Models;
+﻿using System.Net;
+
+namespace ProxyMiner.Core.Models;
 
 /// <summary>
 ///     Proxy.
 /// </summary>
 public sealed class Proxy : IEquatable<Proxy>
 {
-    /// <summary>
-    ///     Proxy constructor without authorization data.
-    /// </summary>
-    /// <param name="type">Proxy type.</param>
-    /// <param name="host">Proxy host.</param>
-    /// <param name="port">Proxy port.</param>
-    public Proxy(ProxyType type, string host, int port) 
+    private Proxy(ProxyType type, string host, int port, ProxyAuthorizationData? authorizationData)
     {
         Host = host;
         Port = port;
         Type = type;
+        AuthorizationData = authorizationData;
 
         Uri = new UriBuilder(GetScheme(), Host, Port).Uri;
     }
 
     /// <summary>
-    ///     Proxy constructor with authorization data.
+    ///     Proxy factory. Creates a valid proxy instance.
     /// </summary>
-    /// <param name="type">Proxy type.</param>
-    /// <param name="host">Proxy host.</param>
-    /// <param name="port">Proxy port.</param>
-    /// <param name="username">Proxy username.</param>
-    /// <param name="password">Proxy password.</param>
-    public Proxy(ProxyType type, string host, int port, string username, string password)
-        : this(type, host, port)
-    {
-        Username= username;
-        Password= password;
-    }
+    public static IProxyFactory Factory { get; } = new ProxyFactory();
 
     /// <summary>
     ///     Proxy host.
@@ -51,16 +38,10 @@ public sealed class Proxy : IEquatable<Proxy>
     public ProxyType Type { get; }
 
     /// <summary>
-    ///     Proxy username.
+    ///     Proxy authorization data.
     /// </summary>
     /// <remarks> May be null.</remarks>
-    public string? Username { get; }
-
-    /// <summary>
-    ///     Proxy password.
-    /// </summary>
-    /// <remarks> May be null.</remarks>
-    public string? Password { get; }
+    public ProxyAuthorizationData? AuthorizationData { get; }
 
     /// <summary>
     ///     Proxy Uri.
@@ -69,7 +50,7 @@ public sealed class Proxy : IEquatable<Proxy>
 
     public bool Equals(Proxy? other)
     {
-        if (other is null) 
+        if (ReferenceEquals(null, other)) 
             return false;
         
         if (ReferenceEquals(this, other)) 
@@ -78,20 +59,17 @@ public sealed class Proxy : IEquatable<Proxy>
         return Host.Equals(other.Host, StringComparison.OrdinalIgnoreCase)
             && Port == other.Port
             && Type == other.Type
-            && IsNullableStringsEquals(Username, other.Username)
-            && IsNullableStringsEquals(Password, other.Password);
+            && IsAuthorizationDataEquals(AuthorizationData, other.AuthorizationData);
 
-        static bool IsNullableStringsEquals(string? str1, string? str2)
-        {
-            return str1 == null && str2 == null
-                || str1 != null && str1.Equals(str2, StringComparison.OrdinalIgnoreCase);
-        }
+        static bool IsAuthorizationDataEquals(ProxyAuthorizationData? ad1, ProxyAuthorizationData? ad2)
+            => ad1 == null && ad2 == null || ad1 != null && ad1.Equals(ad2);
     }
 
     public override bool Equals(object? obj) 
-        => obj is not null && obj.GetType() == GetType() && Equals((Proxy)obj);
+        => ReferenceEquals(this, obj) || obj is Proxy other 
+            && Equals(other);
 
-    public override int GetHashCode() => HashCode.Combine(Host, Port, Type, Username, Password);
+    public override int GetHashCode() => HashCode.Combine(Host, Port, Type, AuthorizationData);
 
     private string GetScheme()
     {
@@ -102,5 +80,63 @@ public sealed class Proxy : IEquatable<Proxy>
             ProxyType.Socks5 => "socks5",
             _ => throw new ArgumentOutOfRangeException($"The type {Type} is not implemented for scheme")
         };
+    }
+    
+    /// <summary>
+    ///     Proxy factory.
+    /// </summary>
+    private sealed class ProxyFactory : IProxyFactory
+    {
+        public (Proxy?, MakeProxyError?) TryMakeProxy(ProxyType type, string host, int port,
+            ProxyAuthorizationData? authorizationData)
+        {
+            Proxy? proxy = null;
+            MakeProxyError? proxyError = null;
+
+            if (IsHostCorrected(host, out var hostProxyError))
+            {
+                if (IsPortCorrected(port, out var portProxyError))
+                {
+                    proxy = new Proxy(type, host, port, authorizationData);        
+                }
+                else
+                {
+                    proxyError = portProxyError;    
+                }
+            }
+            else
+            {
+                proxyError = hostProxyError;
+            }
+
+            return (proxy, proxyError);
+        }
+
+        private bool IsHostCorrected(string host, out MakeProxyError? proxyError)
+        {
+            proxyError = null;
+
+            if (string.IsNullOrWhiteSpace(host))
+            {
+                proxyError = MakeProxyError.HostIsNull;
+            }
+            else if (host.Count(c => c == '.') != 3 || !IPAddress.TryParse(host, out var _))
+            {
+                proxyError = MakeProxyError.HostIsNotCorrect;
+            }
+            
+            return proxyError == null;
+        }
+
+        private bool IsPortCorrected(int port, out MakeProxyError? proxyError)
+        {
+            proxyError = null;
+            if (port is < 0 or > 65535)
+            {
+                proxyError = MakeProxyError.PortOutOfRange;
+            }
+                
+            return proxyError == null;
+        }
     }
 }

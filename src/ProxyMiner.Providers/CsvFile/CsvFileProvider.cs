@@ -17,7 +17,7 @@ public sealed class CsvFileProvider : IProxyProvider
     public Task<ProxyProviderResult> GetProxies(CancellationToken token)
     {
         return File.Exists(_filename)
-            ? Task.Run<ProxyProviderResult>(() =>
+            ? Task.Run(() =>
                 {
                     var proxies = new List<Proxy>();
                     foreach (var line in File.ReadLines(_filename))
@@ -37,8 +37,15 @@ public sealed class CsvFileProvider : IProxyProvider
                             var password = _settings.PasswordColumn == null
                                 ? null
                                 : parts[_settings.PasswordColumn.Value];
-
-                            proxies.Add(new Proxy(type, host, port, username, password));
+                            var authorizationData = username == null || password == null
+                                ? null
+                                : new ProxyAuthorizationData(username, password);
+                            
+                            var (proxy, _) = Proxy.Factory.TryMakeProxy(type, host, port, authorizationData);
+                            if (proxy != null)
+                            {
+                                proxies.Add(proxy);
+                            }
                         }
                         catch
                         {

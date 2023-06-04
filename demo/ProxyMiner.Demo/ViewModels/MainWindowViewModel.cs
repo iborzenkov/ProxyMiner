@@ -167,7 +167,8 @@ namespace ProxyMiner.Demo.ViewModels
         private static void SaveProxies(string filename, IEnumerable<Proxy> proxies)
         {
             File.WriteAllLines(filename, proxies.Select(p => string.Join(";", 
-                p.Type.ToString(), p.Host, p.Port, p.Username, p.Password)));
+                p.Type.ToString(), p.Host, p.Port, 
+                p.AuthorizationData?.Username, p.AuthorizationData?.Password)));
         }
         
         private readonly IMiner _miner;

@@ -29,8 +29,8 @@ namespace ProxyMiner.Demo.ViewModels
         public string Type => Proxy.Type.ToString();
         public string Host => Proxy.Host;
         public int Port => Proxy.Port;
-        public string? Username => Proxy.Username;
-        public string? Password => Proxy.Password;
+        public string? Username => Proxy.AuthorizationData?.Username;
+        public string? Password => Proxy.AuthorizationData?.Password;
         public string? Status
         {
             get => _status;

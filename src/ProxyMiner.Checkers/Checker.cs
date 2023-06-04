@@ -111,9 +111,11 @@ public sealed class Checker : IChecker
 
     private static ICredentials? GetCredentials(Proxy proxy)
     {
-        return string.IsNullOrEmpty(proxy.Username)
+        return proxy.AuthorizationData == null
             ? null
-            : new NetworkCredential(proxy.Username, proxy.Password);
+            : new NetworkCredential(
+                proxy.AuthorizationData.Username,
+                proxy.AuthorizationData.Password);
     }
 
     private const string AlwaysAvailableResourceUrl = "https://ng-ukom.ru/";

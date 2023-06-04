@@ -29,8 +29,11 @@ public sealed class DummyProvider : IProxyProvider
     
     private static readonly IEnumerable<Proxy> DefaulProxies = new []
     {
-        new Proxy(ProxyType.Http, "1.1.1.1", 11),
-        new Proxy(ProxyType.Socks4, "2.2.2.2", 22),
-        new Proxy(ProxyType.Socks5, "3.3.3.3", 33)
+        MakeProxy(ProxyType.Http, "1.1.1.1", 11),
+        MakeProxy(ProxyType.Socks4, "2.2.2.2", 22),
+        MakeProxy(ProxyType.Socks5, "3.3.3.3", 33)
     };
+
+    private static Proxy MakeProxy(ProxyType type, string host, int port)
+        => Proxy.Factory.TryMakeProxy(type, host, port).Item1!;
 }
