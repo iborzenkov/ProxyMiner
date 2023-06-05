@@ -22,8 +22,7 @@ public class ProxyTests
     public void ProxyFactory_MakeProxy(ProxyType type, string host, int port,
         bool isSuccess, MakeProxyError? proxyError)
     {
-        var (proxy, actualProxyError) = Proxy.Factory.TryMakeProxy(
-            type, host, port);
+        var proxy = Proxy.Factory.TryMakeProxy(type, host, port, out var actualProxyError);
         
         Assert.AreEqual(isSuccess, proxy != null);
         Assert.AreEqual(proxyError, actualProxyError);

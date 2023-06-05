@@ -41,7 +41,7 @@ public sealed class CsvFileProvider : IProxyProvider
                                 ? null
                                 : new ProxyAuthorizationData(username, password);
                             
-                            var (proxy, _) = Proxy.Factory.TryMakeProxy(type, host, port, authorizationData);
+                            var proxy  = Proxy.Factory.TryMakeProxy(type, host, port, out _, authorizationData);
                             if (proxy != null)
                             {
                                 proxies.Add(proxy);

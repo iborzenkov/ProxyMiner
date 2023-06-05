@@ -87,29 +87,12 @@ public sealed class Proxy : IEquatable<Proxy>
     /// </summary>
     private sealed class ProxyFactory : IProxyFactory
     {
-        public (Proxy?, MakeProxyError?) TryMakeProxy(ProxyType type, string host, int port,
-            ProxyAuthorizationData? authorizationData)
+        public Proxy? TryMakeProxy(ProxyType type, string host, int port,
+            out MakeProxyError? error, ProxyAuthorizationData? authorizationData = null)
         {
-            Proxy? proxy = null;
-            MakeProxyError? proxyError = null;
-
-            if (IsHostCorrected(host, out var hostProxyError))
-            {
-                if (IsPortCorrected(port, out var portProxyError))
-                {
-                    proxy = new Proxy(type, host, port, authorizationData);        
-                }
-                else
-                {
-                    proxyError = portProxyError;    
-                }
-            }
-            else
-            {
-                proxyError = hostProxyError;
-            }
-
-            return (proxy, proxyError);
+            return IsHostCorrected(host, out error) && IsPortCorrected(port, out error)
+                ? new Proxy(type, host, port, authorizationData)        
+                : null;
         }
 
         private bool IsHostCorrected(string host, out MakeProxyError? proxyError)

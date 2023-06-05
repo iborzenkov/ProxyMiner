@@ -42,9 +42,9 @@ public sealed class GeoNodeProvider : IProxyProvider
                         && !string.IsNullOrEmpty(r.Ip)
                         && r.Type == GeoNodeProxyTypes.Elite) || r.Type == GeoNodeProxyTypes.Anonymous)
                     .Select(r => Proxy.Factory.TryMakeProxy(
-                            r.ProxyType!.Value, r.Ip!, r.PortAsNumber!.Value))
-                    .Where(tuple => tuple.Item1 != null)
-                    .Select(tuple => tuple.Item1!));
+                            r.ProxyType!.Value, r.Ip!, r.PortAsNumber!.Value, out _))
+                    .Where(proxy => proxy != null)
+                    .Select(proxy => proxy!));
 
                 async Task<string> LoadContent(string url, CancellationToken ct)
                 {

@@ -33,9 +33,9 @@ public sealed class FreeProxyListProvider : IProxyProvider
 
                 return ProxyProviderResult.Ok(rows
                     .Where(r => r.Type is FreeProxyTypes.Elite or FreeProxyTypes.Anonymous)
-                    .Select(r => Proxy.Factory.TryMakeProxy(ProxyType.Http, r.Ip!, r.Port!.Value))
-                    .Where(tuple => tuple.Item1 != null)
-                    .Select(tuple => tuple.Item1!));
+                    .Select(r => Proxy.Factory.TryMakeProxy(ProxyType.Http, r.Ip!, r.Port!.Value, out _))
+                    .Where(proxy => proxy != null)
+                    .Select(proxy => proxy!));
             },
             token);
     }

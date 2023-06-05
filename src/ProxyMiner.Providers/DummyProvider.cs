@@ -35,5 +35,5 @@ public sealed class DummyProvider : IProxyProvider
     };
 
     private static Proxy MakeProxy(ProxyType type, string host, int port)
-        => Proxy.Factory.TryMakeProxy(type, host, port).Item1!;
+        => Proxy.Factory.TryMakeProxy(type, host, port, out _)!;
 }

@@ -169,7 +169,7 @@ public class FilterTest
     private static readonly Proxy Proxy6 = MakeProxy(ProxyType.Socks5, "6.6.6.6", 6666);
 
     private static Proxy MakeProxy(ProxyType type, string host, int port)
-        => Proxy.Factory.TryMakeProxy(type, host, port).Item1!;
+        => Proxy.Factory.TryMakeProxy(type, host, port, out _)!;
 
     private static readonly Dictionary<Proxy, ProxyState> RegularProxis = new()
     {
