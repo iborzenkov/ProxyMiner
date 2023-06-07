@@ -12,47 +12,47 @@ public sealed record ProxyStatus
     /// <summary>
     ///     Creates a proxy status with the status "Not anonymous".
     /// </summary>
-    public static ProxyStatus ErrorStatus(HttpStatusCode status) => new() { Status = status };
+    internal static ProxyStatus ErrorStatus(HttpStatusCode status) => new() { Status = status };
 
     /// <summary>
     ///     Creates a proxy status with the status "Not anonymous".
     /// </summary>
-    public static ProxyStatus NotAnonimous => new() { Status = HttpStatusCode.OK };
+    internal static ProxyStatus NotAnonimous => new() { Status = HttpStatusCode.OK };
 
     /// <summary>
     ///     Creates a proxy status with the status "Anonymous".
     /// </summary>
-    public static ProxyStatus Anonimous => new() { Status = HttpStatusCode.OK, IsAnonimous = true };
+    internal static ProxyStatus Anonimous => new() { Status = HttpStatusCode.OK, IsAnonimous = true };
 
     /// <summary>
     ///     Creates a proxy status with the sign "verification canceled by user".
     /// </summary>
-    public static ProxyStatus Cancelled => new() { IsCancelled = true };
+    internal static ProxyStatus Cancelled => new() { IsCancelled = true };
 
     /// <summary>
     ///     Creates a proxy status with the sign "verification canceled by timeout".
     /// </summary>
-    public static ProxyStatus Timeout => new() { IsTimeout = true };
+    internal static ProxyStatus Timeout => new() { IsTimeout = true };
 
     /// <summary>
     ///     Status code, when connecting via proxy.
     /// </summary>
-    public HttpStatusCode Status { get; init; }
+    public HttpStatusCode Status { get; private init; }
 
     /// <summary>
     ///     Indicates that the proxy is anonymous.
     /// </summary>
-    public bool IsAnonimous { get; init; }
+    public bool IsAnonimous { get; private init; }
 
     /// <summary>
     ///     Indicates that the proxy check has been canceled by user.
     /// </summary>
-    public bool IsCancelled { get; init; }
+    public bool IsCancelled { get; private init; }
 
     /// <summary>
     ///     Indicates that the proxy check has been canceled by timeout.
     /// </summary>
-    public bool IsTimeout { get; init; }    
+    public bool IsTimeout { get; private init; }    
 
     /// <summary>
     ///     A sign that the proxy is alive.

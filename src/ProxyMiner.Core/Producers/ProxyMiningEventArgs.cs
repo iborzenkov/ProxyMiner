@@ -5,9 +5,9 @@ namespace ProxyMiner.Core.Producers;
 /// </summary>
 public sealed class ProxyMiningEventArgs : EventArgs
 {
-    public ProxyMiningEventArgs(Producer producer, DateTime startTimeUtc)
+    internal ProxyMiningEventArgs(Producer producer, DateTime startTimeUtc)
     {
-        Producer = producer;
+        Producer = producer ?? throw new ArgumentNullException(nameof(producer));
         StartTimeUtc = startTimeUtc;
     }
 

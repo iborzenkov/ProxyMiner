@@ -13,8 +13,11 @@ public sealed record ProxyState
     /// <param name="startTimeUtc">Check start time.</param>
     /// <param name="finishTimeUtc">Check finish time.</param>
     /// <param name="status">Proxy status.</param>
-    public ProxyState(DateTime startTimeUtc, DateTime finishTimeUtc, ProxyStatus status)
+    internal ProxyState(DateTime startTimeUtc, DateTime finishTimeUtc, ProxyStatus status)
     {
+        if (finishTimeUtc < startTimeUtc)
+            throw new ArgumentOutOfRangeException(nameof(finishTimeUtc), "'finishTimeUtc' should be greater than the 'startTimeUtc'");
+        
         StartTimeUtc = startTimeUtc;
         FinishTimeUtc = finishTimeUtc;
         Status = status;
@@ -25,14 +28,14 @@ public sealed record ProxyState
     /// </summary>
     /// <remarks>This condition indicates that the proxy has not been checked yet.</remarks>
     /// <returns>Proxy state.</returns>
-    public static ProxyState NotDefined => new();
+    internal static ProxyState NotDefined => new();
 
     /// <summary>
     ///     Creates a proxy state that signals that the proxy check has been started, but has not finished yet.
     /// </summary>
     /// <param name="startTimeUtc">Check start time.</param>
     /// <returns>Proxy state.</returns>
-    public static ProxyState StartChecking(DateTime startTimeUtc) => new() { StartTimeUtc = startTimeUtc };
+    internal static ProxyState StartChecking(DateTime startTimeUtc) => new() { StartTimeUtc = startTimeUtc };
 
     /// <summary>
     ///     Check start time.

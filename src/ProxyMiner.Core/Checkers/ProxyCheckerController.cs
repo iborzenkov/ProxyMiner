@@ -8,7 +8,7 @@ using Timer = System.Timers.Timer;
 
 namespace ProxyMiner.Core.Checkers;
 
-internal sealed class ProxyCheckerController : ICheckerController, ICheckObserver, IDisposable
+internal sealed class ProxyCheckerController : ICheckerController, ICheckObserver
 {
     public ProxyCheckerController(ProxyCollection proxies, ProxyChecker checker, Settings settings)
     {
@@ -22,7 +22,7 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
         _timer.Elapsed += TimerElapsed;
     }
 
-    public void Dispose()
+    void IDisposable.Dispose()
     {
         _checker.Unsubscribe(this);
 
@@ -30,7 +30,7 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
         _timer.Dispose();
     }
 
-    public void CheckNow(IEnumerable<Proxy> proxies)
+    void ICheckerController.CheckNow(IEnumerable<Proxy> proxies)
     {
         lock (_locker)
         {
@@ -41,7 +41,7 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
         }
     }
 
-    public void StopChecking(IEnumerable<Proxy> proxies)
+    void ICheckerController.StopChecking(IEnumerable<Proxy> proxies)
     {
         lock (_locker)
         {

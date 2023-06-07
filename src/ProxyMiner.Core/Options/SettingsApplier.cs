@@ -2,12 +2,12 @@
 
 internal sealed class SettingsApplier
 {
-    public SettingsApplier(Settings settings)
+    internal SettingsApplier(Settings settings)
     {
         _settings = settings;
     }
 
-    public void Apply(Settings newSettings)
+    internal void Apply(Settings newSettings)
     {
         using var _ = _settings.BeginApply();
         

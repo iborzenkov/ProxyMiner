@@ -30,7 +30,7 @@ internal sealed class SettingsFileWatcher : IDisposable
         _watcher.Created += FolderChanged;
     }
 
-    public void Dispose()
+    void IDisposable.Dispose()
     {
         if (_watcher == null)
             return;

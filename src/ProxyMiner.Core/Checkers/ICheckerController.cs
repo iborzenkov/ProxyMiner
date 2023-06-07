@@ -5,7 +5,7 @@ namespace ProxyMiner.Core.Checkers;
 /// <summary>
 ///     Controller that manage proxy validation.
 /// </summary>
-public interface ICheckerController
+public interface ICheckerController : IDisposable
 {
     /// <summary>
     ///     Instructs to check the specified proxy collection as much as possible.

@@ -19,7 +19,9 @@ internal sealed class ProducerTask : IDisposable
         _miningFinished = miningFinished;
     }
 
-    public void Start()
+    public void Dispose() => Stop();
+
+    internal void Start()
     {
         if (_isActive)
             return;
@@ -38,7 +40,7 @@ internal sealed class ProducerTask : IDisposable
         _timer.Elapsed += TimerElapsed;
     }
 
-    public void Stop()
+    internal void Stop()
     {
         if (!_isActive)
             return;
@@ -54,8 +56,6 @@ internal sealed class ProducerTask : IDisposable
 
         _isActive = false;
     }
-
-    public void Dispose() => Stop();
 
     private async void TimerElapsed(object? sender, ElapsedEventArgs e)
     {

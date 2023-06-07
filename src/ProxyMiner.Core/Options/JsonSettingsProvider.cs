@@ -9,19 +9,22 @@ public sealed class JsonSettingsProvider : ISettingsProvider
 {
     public JsonSettingsProvider(string filename)
     {
+        if (string.IsNullOrWhiteSpace(filename))
+            throw new ArgumentNullException(nameof(filename));
+        
         var settingsReader = new JsonReader();
         var settingsApplier = new SettingsApplier(Settings);
         _settingsWatcher = new SettingsFileWatcher(settingsReader, filename, settings => settingsApplier.Apply(settings));
     }
     
-    public void Dispose()
+    void IDisposable.Dispose()
     {
         _settingsWatcher.Dispose();
     }
 
     public Settings Settings { get; } = new();
 
-    private readonly SettingsFileWatcher _settingsWatcher;
+    private readonly IDisposable _settingsWatcher;
     
     private sealed class JsonReader : ISettingsFileReader
     {

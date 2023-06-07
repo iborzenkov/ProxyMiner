@@ -3,21 +3,15 @@
 /// <summary>
 ///     Specifying sorting of proxies collection.
 /// </summary>
-public sealed record ProxySort
+public sealed record ProxySort(SortingField Field, SortDirection Direction)
 {
-    public ProxySort(SortingField field, SortDirection direction)
-    {
-        Field = field;
-        Direction = direction;
-    }
-
     /// <summary>
     ///     Sorting direction.
     /// </summary>
-    public SortDirection Direction { get; }
+    public SortDirection Direction { get; } = Direction;
 
     /// <summary>
     ///     Sortable proxy field.
     /// </summary>
-    public SortingField Field { get; }
+    public SortingField Field { get; } = Field;
 }

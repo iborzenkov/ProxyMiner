@@ -20,29 +20,29 @@ internal sealed class Miner : IMiner
         
         _proxyCheckerController = new ProxyCheckerController(_proxies, _proxyChecker, settings);
     }
-
-    public IProducerCollection Producers => _producers;
-    public IProxyCollection Proxies => _proxies;
-    public ICheckerController Checker => _proxyCheckerController;
-
-    public void Start()
-    {
-        _producers.Start();
-        _proxyChecker.Start();
-    }
-
-    public void Stop()
-    {
-        _producers.Stop();
-        _proxyChecker.Stop();
-    }
-
-    public void Dispose()
+    
+    void IDisposable.Dispose()
     {
         _proxyChecker.Dispose();
         _proxyCheckerController.Dispose();
         
         _producers.Mined -= ProxiesMined;
+    }
+
+    public IProducerCollection Producers => _producers;
+    public IProxyCollection Proxies => _proxies;
+    public ICheckerController Checker => _proxyCheckerController;
+
+    void IMiner.Start()
+    {
+        _producers.Start();
+        _proxyChecker.Start();
+    }
+
+    void IMiner.Stop()
+    {
+        _producers.Stop();
+        _proxyChecker.Stop();
     }
 
     private void ProxiesMined(object? sender, ProxyMinedEventArgs e)
@@ -56,5 +56,5 @@ internal sealed class Miner : IMiner
     private readonly ProducerCollection _producers;
     private readonly ProxyCollection _proxies;
     private readonly ProxyChecker _proxyChecker;
-    private readonly ProxyCheckerController _proxyCheckerController;
+    private readonly ICheckerController _proxyCheckerController;
 }

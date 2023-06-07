@@ -8,13 +8,23 @@ public sealed class Producer
     public Producer(string name, IProxyProvider provider)
     {
         Name = name;
-        Provider = provider;
+        Provider = provider ?? throw new ArgumentNullException(nameof(provider));
     }
 
     /// <summary>
     ///     Name of producer.
     /// </summary>
-    public string Name { get; set; }
+    public string Name
+    {
+        get => _name!;
+        set
+        {
+            if (_name != null && _name.Equals(value, StringComparison.CurrentCulture))
+                return;
+            
+            _name = ValidateName(value);
+        }
+    }
 
     /// <summary>
     ///     A sign of the producer's availability.
@@ -42,5 +52,14 @@ public sealed class Producer
     /// </summary>
     public event EventHandler<EventArgs> EnabledChanged = (_, _) => { };
 
+    private string ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))    
+            throw new ArgumentNullException(nameof(name));
+        
+        return name;
+    }
+    
     private bool _isEnabled;
+    private string? _name;
 }

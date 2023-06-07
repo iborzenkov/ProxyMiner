@@ -104,7 +104,7 @@ public sealed class Settings
     {
         public GroupingTransaction(Settings settings) => _settings = settings;
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             _settings._groupingTransaction = null;
             
@@ -114,7 +114,7 @@ public sealed class Settings
             }
         }
 
-        public void AddChangedSettingName(string settingName)
+        internal void AddChangedSettingName(string settingName)
         {
             if (_isNeedChangeAllSettings)
                 return;

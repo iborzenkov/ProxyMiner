@@ -6,7 +6,7 @@ namespace ProxyMiner.Core;
 /// <summary>
 ///     Miner factory.
 /// </summary>
-public sealed class MinerFactory
+public static class MinerFactory
 {
     /// <summary>
     ///     Creates an IMiner.

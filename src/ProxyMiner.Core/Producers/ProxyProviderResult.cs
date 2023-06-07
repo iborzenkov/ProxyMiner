@@ -13,8 +13,17 @@ public sealed class ProxyProviderResult
     ///     Proxies received successfully.
     /// </summary>
     /// <param name="proxies">Proxy collection.</param>
-    public static ProxyProviderResult Ok(IEnumerable<Proxy> proxies) 
-        => new() { Code = ProxyProviderResultCode.Ok, Proxies = proxies };
+    public static ProxyProviderResult Ok(IEnumerable<Proxy> proxies)
+    {
+        if (proxies == null)
+            throw new ArgumentNullException(nameof(proxies));
+
+        return new ProxyProviderResult
+        {
+            Code = ProxyProviderResultCode.Ok, 
+            Proxies = proxies
+        };
+    }
 
     /// <summary>
     ///     Receiving the proxy was interrupted by user.
@@ -35,15 +44,33 @@ public sealed class ProxyProviderResult
     ///     An error occurred while retrieving the proxy list.
     /// </summary>
     /// <param name="exception">The exception that occurred.</param>
-    public static ProxyProviderResult Error(Exception exception) 
-        => new() { Code = ProxyProviderResultCode.Error, Exception = exception };
+    public static ProxyProviderResult Error(Exception exception)
+    {
+        if (exception == null)
+            throw new ArgumentNullException(nameof(exception));
+
+        return new ProxyProviderResult
+        {
+            Code = ProxyProviderResultCode.Error,
+            Exception = exception
+        };
+    }
 
     /// <summary>
     ///     Custom error occurred while retrieving the proxy list.
     /// </summary>
     /// <param name="message">The custom error message.</param>
     public static ProxyProviderResult Custom(string message)
-        => new() { Code = ProxyProviderResultCode.Custom, CustomMessage = message };
+    {
+        if (string.IsNullOrWhiteSpace(message))
+            throw new ArgumentNullException(nameof(message));
+        
+        return new ProxyProviderResult
+        {
+            Code = ProxyProviderResultCode.Custom, 
+            CustomMessage = message
+        };
+    }
 
     /// <summary>
     ///     Code results.

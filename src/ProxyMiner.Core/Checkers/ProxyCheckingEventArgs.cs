@@ -7,9 +7,9 @@ namespace ProxyMiner.Core.Checkers;
 /// </summary>
 public sealed class ProxyCheckingEventArgs : EventArgs
 {
-    public ProxyCheckingEventArgs(Proxy proxy, DateTime startTimeUtc)
+    internal ProxyCheckingEventArgs(Proxy proxy, DateTime startTimeUtc)
     {
-        Proxy = proxy;
+        Proxy = proxy ?? throw new ArgumentNullException(nameof(proxy));
         StartTimeUtc = startTimeUtc;
     }
 
