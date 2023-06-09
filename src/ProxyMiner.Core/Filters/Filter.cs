@@ -58,19 +58,29 @@ public sealed class Filter
     {
         public FilterBuilder Count(int value)
         {
+            if (value <= 0)
+                throw new ArgumentOutOfRangeException(nameof(Count), $"The Count must be greater than 0");
+
             _count = value;
             return this;
         }
 
         public FilterBuilder Include(IEnumerable<Proxy> proxies)
         {
-            _includedProxies = proxies;
+            if (proxies != null)
+            {
+                _includedProxies.AddRange(proxies);
+            }
+
             return this;
         }
 
         public FilterBuilder Except(IEnumerable<Proxy> proxies)
         {
-            _excludedProxies = proxies;
+            if (proxies != null)
+            {
+                _excludedProxies.AddRange(proxies);
+            }
             return this;
         }
 
@@ -103,8 +113,8 @@ public sealed class Filter
             return new Filter 
             {
                 Count = _count,
-                ExcludedProxies = _excludedProxies ?? Enumerable.Empty<Proxy>(),
-                IncludedProxies = _includedProxies ?? Enumerable.Empty<Proxy>(),
+                ExcludedProxies = _excludedProxies,
+                IncludedProxies = _includedProxies,
                 Sort = _sort,
                 ExpiredState = _expiredState,
                 IsValid = _isValid,
@@ -113,8 +123,8 @@ public sealed class Filter
         }
 
         private int? _count;
-        private IEnumerable<Proxy>? _excludedProxies;
-        private IEnumerable<Proxy>? _includedProxies;
+        private readonly List<Proxy> _excludedProxies = new();
+        private readonly List<Proxy> _includedProxies = new();
         private ProxySort? _sort;
         private bool? _isValid;
         private bool? _isAnonimous;

@@ -77,6 +77,9 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
     
     private void TimerElapsed(object? sender, ElapsedEventArgs e)
     {
+        if (_checker.FreeCheckSlot == 0)
+            return;
+
         var proxies = _proxies.GetProxies(
             Filter.Builder
                 .Count(_checker.FreeCheckSlot)

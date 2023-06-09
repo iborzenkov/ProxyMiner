@@ -92,8 +92,6 @@ namespace ProxyMiner.Demo.ViewModels
             }
         }
 
-        public int? ValidCount => null;
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void ProxyMining(object? sender, ProxyMiningEventArgs args)

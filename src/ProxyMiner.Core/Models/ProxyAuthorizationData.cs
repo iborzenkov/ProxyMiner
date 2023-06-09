@@ -8,7 +8,7 @@ public sealed class ProxyAuthorizationData : IEquatable<ProxyAuthorizationData>
     public ProxyAuthorizationData(string username, string? password)
     {
         if (string.IsNullOrWhiteSpace(username))
-            throw new ArgumentException("The username cannot be empty", nameof(username));
+            throw new ArgumentNullException("The username cannot be empty", nameof(username));
 
         Username = username;
         Password = password;

@@ -9,10 +9,11 @@ using ProxyMiner.Core.Models;
 namespace ProxyMiner.Checkers;
 
 /// <summary>
-/// Проверяет выбранный прокси-сервер.
-/// Критерии проверки:
-/// 1. Получет содержимое доступного сайта с поддержкой SSL.
-/// 2. Проверят на сайте whatismyip.cz текущий IP-адрес. Если он совпадает с адресом прокси, то прокси анонимен.
+///     Checks the selected proxy server.
+///     Verification criteria:
+///         1. Retrieves the content of an accessible SSL-enabled site.
+///         2. They will check it on the whatismyip.cz website is the current IP address. 
+///             If it matches the proxy address, then the proxy is anonymous.
 /// </summary>
 public sealed class Checker : IChecker
 {

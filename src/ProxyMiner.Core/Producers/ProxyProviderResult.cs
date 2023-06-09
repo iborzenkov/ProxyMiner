@@ -15,13 +15,10 @@ public sealed class ProxyProviderResult
     /// <param name="proxies">Proxy collection.</param>
     public static ProxyProviderResult Ok(IEnumerable<Proxy> proxies)
     {
-        if (proxies == null)
-            throw new ArgumentNullException(nameof(proxies));
-
         return new ProxyProviderResult
         {
             Code = ProxyProviderResultCode.Ok, 
-            Proxies = proxies
+            Proxies = proxies ?? Enumerable.Empty<Proxy>(),
         };
     }
 

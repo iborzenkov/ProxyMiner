@@ -7,7 +7,7 @@ public sealed class SettingsChangedEventArgs : EventArgs
 {
     public SettingsChangedEventArgs(IEnumerable<string> settingNames)
     {
-        SettingNames = settingNames;
+        SettingNames = settingNames ?? Enumerable.Empty<string>();
     }
 
     /// <summary>
@@ -15,8 +15,13 @@ public sealed class SettingsChangedEventArgs : EventArgs
     /// </summary>
     /// <param name="settingName">Setting.</param>
     /// <returns>True if the specified setting is present in the list of changed settings.</returns>
-    public bool IsThisProperty(string settingName) => !SettingNames.Any()
-        || SettingNames.Contains(settingName);
+    public bool IsThisProperty(string settingName)
+    {
+        if (string.IsNullOrWhiteSpace(settingName))
+            throw new ArgumentNullException(nameof(settingName));
+
+        return !SettingNames.Any() || SettingNames.Contains(settingName);
+    }
 
     /// <summary>
     ///     List of changed settings.

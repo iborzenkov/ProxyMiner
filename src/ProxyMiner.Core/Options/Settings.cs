@@ -51,6 +51,9 @@ public sealed class Settings
         get => _checkThreadCount;
         set
         {
+            if (value <= 0)
+                throw new ArgumentOutOfRangeException(nameof(CheckThreadCount), $"The CheckThreadCount must be greater than 0");
+
             if (_checkThreadCount == value)
                 return;
 
