@@ -7,7 +7,7 @@ public sealed class Producer
 {
     public Producer(string name, IProxyProvider provider)
     {
-        Name = name;
+        Name = ValidateName(name);
         Provider = provider ?? throw new ArgumentNullException(nameof(provider));
     }
 

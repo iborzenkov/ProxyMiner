@@ -8,15 +8,21 @@ internal sealed class ProducerCollection : IProducerCollection
 {
     public ProducerCollection(Settings settings)
     {
-        _settings = settings;
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
-    public void Add(Producer producer) => AddRange(new[] { producer });
+    public void Add(Producer producer)
+    {
+        if (producer == null)
+            throw new ArgumentNullException(nameof(producer));
+        
+        AddRange(new[] { producer });
+    }
 
     public void AddRange(IEnumerable<Producer> producers)
     {
         if (producers == null)
-            return;
+            throw new ArgumentNullException(nameof(producers));
 
         var addedItems = new List<Producer>();
         foreach (var producer in producers.Where(p => p != null).ToList())
@@ -46,12 +52,18 @@ internal sealed class ProducerCollection : IProducerCollection
     }
 
 
-    public void Remove(Producer producer) => RemoveRange(new[] { producer });
+    public void Remove(Producer producer)
+    {
+        if (producer == null)
+            throw new ArgumentNullException(nameof(producer));
+        
+        RemoveRange(new[] { producer });
+    }
 
     public void RemoveRange(IEnumerable<Producer> producers)
     {
         if (producers == null)
-            return;
+            throw new ArgumentNullException(nameof(producers));
 
         var removedItems = new List<Producer>();
         foreach (var producer in producers.Where(p => p != null))

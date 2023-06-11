@@ -18,19 +18,21 @@ public sealed class ProxyProviderResult
         return new ProxyProviderResult
         {
             Code = ProxyProviderResultCode.Ok, 
-            Proxies = proxies ?? Enumerable.Empty<Proxy>(),
+            Proxies = proxies ?? throw new ArgumentNullException(nameof(proxies))
         };
     }
 
     /// <summary>
     ///     Receiving the proxy was interrupted by user.
     /// </summary>
-    public static ProxyProviderResult Cancelled => new() { Code = ProxyProviderResultCode.Cancelled };
+    public static ProxyProviderResult Cancelled => 
+        new() { Code = ProxyProviderResultCode.Cancelled };
 
     /// <summary>
     ///     Receiving the proxy was interrupted by timeout.
     /// </summary>
-    public static ProxyProviderResult Timeout => new() { Code = ProxyProviderResultCode.Timeout };
+    public static ProxyProviderResult Timeout => 
+        new() { Code = ProxyProviderResultCode.Timeout };
 
     /// <summary>
     ///     Uncertain result. This is the state before the procedure for getting the proxy list.

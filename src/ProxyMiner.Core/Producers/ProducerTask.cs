@@ -12,11 +12,11 @@ internal sealed class ProducerTask : IDisposable
         Action<Producer, DateTime> miningStart,
         Action<Producer, DateTime, ProxyProviderResult> miningFinished)
     {
-        _producer = producer;
-        _settings = settings;
+        _producer = producer ?? throw new ArgumentNullException(nameof(producer));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         
-        _miningStart = miningStart;
-        _miningFinished = miningFinished;
+        _miningStart = miningStart ?? throw new ArgumentNullException(nameof(miningStart));
+        _miningFinished = miningFinished ?? throw new ArgumentNullException(nameof(miningFinished));
     }
 
     public void Dispose() => Stop();
