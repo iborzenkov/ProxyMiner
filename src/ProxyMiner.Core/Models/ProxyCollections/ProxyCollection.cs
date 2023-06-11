@@ -6,15 +6,21 @@ namespace ProxyMiner.Core.Models.ProxyCollections;
 
 internal sealed class ProxyCollection : IProxyCollection
 {
-    public void Add(Proxy proxy) => AddRange(new[] { proxy });
+    public void Add(Proxy proxy)
+    {
+        if (proxy == null)
+            throw new ArgumentNullException(nameof(proxy));
+        
+        AddRange(new[] { proxy });
+    }
 
     public void AddRange(IEnumerable<Proxy> proxies)
     {
         if (proxies == null)
-            return;
+            throw new ArgumentNullException(nameof(proxies));
 
         var addedItems = new List<Proxy>();
-        foreach (var proxy in proxies.Where(p => p != null).ToList())
+        foreach (var proxy in proxies.Where(proxy => proxy != null).ToList())
         {
             if (!_items.ContainsKey(proxy) && _items.TryAdd(proxy, ProxyState.NotDefined))
             {
@@ -28,14 +34,21 @@ internal sealed class ProxyCollection : IProxyCollection
         }
     }
 
-    public void Remove(Proxy proxy) => RemoveRange(new[] { proxy });
+    public void Remove(Proxy proxy)
+    {
+        if (proxy == null)
+            throw new ArgumentNullException(nameof(proxy));
+
+        RemoveRange(new[] { proxy });
+    }
 
     public void RemoveRange(IEnumerable<Proxy> proxies)
     {
         if (proxies == null)
-            return;
+            throw new ArgumentNullException(nameof(proxies));
 
-        var removedItems = proxies.Where(proxy => proxy != null && _items.TryRemove(proxy, out _)).ToList();
+        var removedItems = proxies.Where(proxy => 
+            proxy != null && _items.TryRemove(proxy, out _)).ToList();
 
         if (removedItems.Any())
         {
@@ -47,6 +60,9 @@ internal sealed class ProxyCollection : IProxyCollection
 
     public IEnumerable<Proxy> GetProxies(Filter filter)
     {
+        if (filter == null)
+            throw new ArgumentNullException(nameof(filter));
+
         var proxyWithState = _items.ToDictionary(i => i.Key, i => i.Value);
         var applier = new FilterApplier(proxyWithState);
         return applier.Apply(filter);
@@ -56,6 +72,9 @@ internal sealed class ProxyCollection : IProxyCollection
 
     internal void SetProxyState(Proxy proxy, ProxyState state)
     {
+        if (proxy == null)
+            throw new ArgumentNullException(nameof(proxy));
+
         // todo: here you can add an item to the collection that was previously deleted by another thread
         if (_items.ContainsKey(proxy))
         {

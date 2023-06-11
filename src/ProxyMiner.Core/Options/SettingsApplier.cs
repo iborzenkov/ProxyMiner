@@ -4,11 +4,14 @@ internal sealed class SettingsApplier
 {
     internal SettingsApplier(Settings settings)
     {
-        _settings = settings;
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
     internal void Apply(Settings newSettings)
     {
+        if (newSettings == null)
+            throw new ArgumentNullException(nameof(newSettings));
+        
         using var _ = _settings.BeginApply();
         
         _settings.SourceTimeout = newSettings.SourceTimeout;

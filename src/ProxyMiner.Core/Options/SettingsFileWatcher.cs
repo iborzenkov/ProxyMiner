@@ -7,9 +7,11 @@ internal sealed class SettingsFileWatcher : IDisposable
 {
     public SettingsFileWatcher(ISettingsFileReader reader, string filename, Action<Settings> applySettings)
     {
-        _reader = reader;
-        _applySettings = applySettings;
-
+        _reader = reader ?? throw new ArgumentNullException(nameof(reader));
+        _applySettings = applySettings ?? throw new ArgumentNullException(nameof(applySettings));
+        if (string.IsNullOrWhiteSpace(filename))
+            throw new ArgumentNullException(nameof(filename));
+        
         var folder = Path.GetDirectoryName(Path.GetFullPath(filename));
         if (!Directory.Exists(folder))
             return;

@@ -8,8 +8,8 @@ internal sealed class ProxyChecker : IDisposable
 {
     internal ProxyChecker(IChecker checker, Settings settings)
     {
-        _checker = checker;
-        _settings = settings;
+        _checker = checker ?? throw new ArgumentNullException(nameof(checker));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
     public void Dispose() => Stop();
@@ -27,7 +27,10 @@ internal sealed class ProxyChecker : IDisposable
         }
     }
 
-    internal int FreeCheckSlot => _proxies == null ? 0 : _proxies.BoundedCapacity - _proxies.Count;
+    internal int FreeCheckSlot => 
+        _proxies == null 
+            ? 0 
+            : _proxies.BoundedCapacity - _proxies.Count;
 
     internal void Start()
     {
@@ -97,6 +100,9 @@ internal sealed class ProxyChecker : IDisposable
 
     internal void Add(IEnumerable<Proxy> proxies)
     {
+        if (proxies == null)
+            throw new ArgumentNullException(nameof(proxies));
+        
         if (!IsEnabled)
             return;
 
@@ -117,8 +123,21 @@ internal sealed class ProxyChecker : IDisposable
         }
     }
 
-    internal void Subscribe(ICheckObserver observer) => _observers.Add(observer);
-    internal void Unsubscribe(ICheckObserver observer) => _observers.Remove(observer);
+    internal void Subscribe(ICheckObserver observer)
+    {
+        if (observer == null)
+            throw new ArgumentNullException(nameof(observer));
+        
+        _observers.Add(observer);
+    }
+
+    internal void Unsubscribe(ICheckObserver observer)
+    {
+        if (observer == null)
+            throw new ArgumentNullException(nameof(observer));
+
+        _observers.Remove(observer);
+    }
 
     private BlockingCollection<Proxy>? _proxies;
     private CancellationTokenSource? _commonTokenSource;

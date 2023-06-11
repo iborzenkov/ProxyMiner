@@ -12,10 +12,10 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
 {
     public ProxyCheckerController(ProxyCollection proxies, ProxyChecker checker, Settings settings)
     {
-        _proxies = proxies;
-        _settings = settings;
+        _proxies = proxies ?? throw new ArgumentNullException(nameof(proxies));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
-        _checker = checker;
+        _checker = checker ?? throw new ArgumentNullException(nameof(checker));
         _checker.Subscribe(this);
 
         _timer = new Timer(TimerIntervalMilliseconds) { Enabled = _checker.IsEnabled };
@@ -27,11 +27,15 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
         _checker.Unsubscribe(this);
 
         _timer.Stop();
+        _timer.Elapsed -= TimerElapsed;
         _timer.Dispose();
     }
 
     void ICheckerController.CheckNow(IEnumerable<Proxy> proxies)
     {
+        if (proxies == null)
+            throw new ArgumentNullException(nameof(proxies));
+        
         lock (_locker)
         {
             var collection = proxies.ToList();
@@ -43,6 +47,9 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
 
     void ICheckerController.StopChecking(IEnumerable<Proxy> proxies)
     {
+        if (proxies == null)
+            throw new ArgumentNullException(nameof(proxies));
+
         lock (_locker)
         {
             var collection = proxies.ToList();
@@ -63,12 +70,18 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
 
     void ICheckObserver.Checking(ProxyCheckingEventArgs args)
     {
+        if (args == null)
+            throw new ArgumentNullException(nameof(args));
+
         _proxies.SetProxyState(args.Proxy, ProxyState.StartChecking(args.StartTimeUtc));
         Checking.Invoke(this, args);
     }
 
     void ICheckObserver.Checked(ProxyCheckedEventArgs args)
     {
+        if (args == null)
+            throw new ArgumentNullException(nameof(args));
+
         _proxies.SetProxyState(args.Proxy, args.State);
 
         _inProgress.TryRemove(args.Proxy, out _);

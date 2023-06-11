@@ -9,11 +9,14 @@ internal sealed class FilterApplier
 {
     public FilterApplier(Dictionary<Proxy, ProxyState> proxyWithState)
     {
-        _proxyWithState = proxyWithState;
+        _proxyWithState = proxyWithState ?? throw new ArgumentNullException(nameof(proxyWithState));
     }
     
     public List<Proxy> Apply(Filter filter)
     {
+        if (filter == null)
+            throw new ArgumentNullException(nameof(filter));
+        
         var allProxies = _proxyWithState.Select(p => p.Key).ToList();
         var withoutExcluded = allProxies.Except(filter.ExcludedProxies).ToList();
         var valided = GetValidProxies(withoutExcluded, filter.IsValid);
@@ -21,10 +24,10 @@ internal sealed class FilterApplier
         var withNotActualStates = GetProxiesWithNotActualStates(anonimous, filter.ExpiredState);
         var sorted = SortIfNeed(withNotActualStates, filter.Sort);
         sorted.InsertRange(0, filter.IncludedProxies.Except(filter.ExcludedProxies));
+
         return filter.Count == null
             ? sorted
             : sorted.Take(filter.Count ?? sorted.Count).ToList();
-
     }
     
     private List<Proxy> SortIfNeed(List<Proxy> proxies, ProxySort? sort)

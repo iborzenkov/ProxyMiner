@@ -35,7 +35,8 @@ public sealed record ProxyState
     /// </summary>
     /// <param name="startTimeUtc">Check start time.</param>
     /// <returns>Proxy state.</returns>
-    internal static ProxyState StartChecking(DateTime startTimeUtc) => new() { StartTimeUtc = startTimeUtc };
+    internal static ProxyState StartChecking(DateTime startTimeUtc) => 
+        new() { StartTimeUtc = startTimeUtc };
 
     /// <summary>
     ///     Check start time.

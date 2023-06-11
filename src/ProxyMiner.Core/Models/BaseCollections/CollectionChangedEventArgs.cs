@@ -3,7 +3,6 @@
 /// <summary>
 ///     Event arguments about actions with collection elements.
 /// </summary>
-/// <typeparam name="T"></typeparam>
 public sealed class CollectionChangedEventArgs<T> : EventArgs
 {
     private CollectionChangedEventArgs(CollectionChangeAction action, 
@@ -14,11 +13,21 @@ public sealed class CollectionChangedEventArgs<T> : EventArgs
         OldItems = oldItems;
     }
 
-    internal static CollectionChangedEventArgs<T> RemoveEventArgs(ICollection<T> items) 
-        => new (CollectionChangeAction.Remove, null, items);
+    internal static CollectionChangedEventArgs<T> RemoveEventArgs(ICollection<T> items)
+    {
+        if (items == null)
+            throw new ArgumentNullException(nameof(items));
+
+        return new CollectionChangedEventArgs<T>(CollectionChangeAction.Remove, null, items);
+    }
 
     internal static CollectionChangedEventArgs<T> AddEventArgs(ICollection<T> items)
-        => new (CollectionChangeAction.Add, items, null);
+    {
+        if (items == null)
+            throw new ArgumentNullException(nameof(items));
+        
+        return new CollectionChangedEventArgs<T>(CollectionChangeAction.Add, items, null);
+    }
 
     /// <summary>
     ///     Collection change action.

@@ -7,7 +7,7 @@ public sealed class SettingsChangedEventArgs : EventArgs
 {
     public SettingsChangedEventArgs(IEnumerable<string> settingNames)
     {
-        SettingNames = settingNames ?? Enumerable.Empty<string>();
+        SettingNames = settingNames ?? throw new ArgumentNullException(nameof(settingNames));
     }
 
     /// <summary>

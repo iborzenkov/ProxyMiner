@@ -8,7 +8,7 @@ public sealed class ProxyAuthorizationData : IEquatable<ProxyAuthorizationData>
     public ProxyAuthorizationData(string username, string? password)
     {
         if (string.IsNullOrWhiteSpace(username))
-            throw new ArgumentNullException("The username cannot be empty", nameof(username));
+            throw new ArgumentNullException(nameof(username));
 
         Username = username;
         Password = password;
@@ -43,6 +43,6 @@ public sealed class ProxyAuthorizationData : IEquatable<ProxyAuthorizationData>
             && Username.Equals(other.Username, StringComparison.Ordinal);
     }
 
-    public override bool Equals(object? obj) 
-        => ReferenceEquals(this, obj) || obj is ProxyAuthorizationData other && Equals(other);
+    public override bool Equals(object? obj) =>
+        ReferenceEquals(this, obj) || obj is ProxyAuthorizationData other && Equals(other);
 }

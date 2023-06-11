@@ -16,11 +16,16 @@ internal static class ProxyComparerFactory
     /// <exception cref="ArgumentOutOfRangeException">Occurs if the sorting direction is not implemented.</exception>
     internal static IComparer<Proxy> Make(ProxySort sort, Func<Proxy, ProxyState> stateFinder)
     {
-        return sort.Field switch
+        switch (sort.Field)
         {
-            SortingField.LastCheck => new LastCheckProxyComparer(sort.Direction, stateFinder),
-            _ => throw new ArgumentOutOfRangeException($"Sorting for '{sort.Field}' is not implemented")
-        };
+            case SortingField.LastCheck:
+                if (stateFinder == null)
+                    throw new ArgumentNullException(nameof(stateFinder));
+                
+                return new LastCheckProxyComparer(sort.Direction, stateFinder);
+            default:
+                throw new ArgumentOutOfRangeException($"Sorting for '{sort.Field}' is not implemented");
+        }
     }
 
     private class LastCheckProxyComparer : IComparer<Proxy>
@@ -28,7 +33,7 @@ internal static class ProxyComparerFactory
         public LastCheckProxyComparer(SortDirection direction, Func<Proxy, ProxyState> stateFinder)
         {
             _direction = direction;
-            _stateFinder = stateFinder;
+            _stateFinder = stateFinder ?? throw new ArgumentNullException(nameof(stateFinder));
         }
 
         public int Compare(Proxy? x, Proxy? y)

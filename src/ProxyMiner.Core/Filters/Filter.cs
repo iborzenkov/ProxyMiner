@@ -60,6 +60,9 @@ public sealed class Filter
         {
             if (value <= 0)
                 throw new ArgumentOutOfRangeException(nameof(Count), $"The Count must be greater than 0");
+            
+            if (_count != null)
+                throw new InvalidOperationException("You cannot call the 'Count' method twice"); 
 
             _count = value;
             return this;
@@ -67,60 +70,68 @@ public sealed class Filter
 
         public FilterBuilder Include(IEnumerable<Proxy> proxies)
         {
-            if (proxies != null)
-            {
-                _includedProxies.AddRange(proxies);
-            }
+            if (proxies == null)
+                throw new ArgumentNullException(nameof(proxies));
 
+            _includedProxies.AddRange(proxies);
             return this;
         }
 
         public FilterBuilder Except(IEnumerable<Proxy> proxies)
         {
-            if (proxies != null)
-            {
-                _excludedProxies.AddRange(proxies);
-            }
+            if (proxies == null)
+                throw new ArgumentNullException(nameof(proxies));
+
+            _excludedProxies.AddRange(proxies);
             return this;
         }
 
         public FilterBuilder StateNotExpired(TimeSpan expiredState)
         {
+            if (_expiredState != null)
+                throw new InvalidOperationException("You cannot call the 'StateNotExpired' method twice"); 
+
             _expiredState = expiredState;
             return this;
         }
 
         public FilterBuilder SortedBy(SortingField field, SortDirection direction)
         {
+            if (_sort != null)
+                throw new InvalidOperationException("You cannot call the 'SortedBy' method twice"); 
+                    
             _sort = new ProxySort(field, direction);
             return this;
         }
 
         public FilterBuilder Valid(bool isValid)
         {
+            if (_isValid != null)
+                throw new InvalidOperationException("You cannot call the 'Valid' method twice"); 
+
             _isValid = isValid;
             return this;
         }
 
         public FilterBuilder Anonimous(bool isAnonimous)
         {
+            if (_isAnonimous != null)
+                throw new InvalidOperationException("You cannot call the 'Anonimous' method twice"); 
+
             _isAnonimous = isAnonimous;
             return this;
         }
         
-        public Filter Build() 
-        { 
-            return new Filter 
-            {
-                Count = _count,
-                ExcludedProxies = _excludedProxies,
-                IncludedProxies = _includedProxies,
-                Sort = _sort,
-                ExpiredState = _expiredState,
-                IsValid = _isValid,
-                IsAnonimous = _isAnonimous
-            };
-        }
+        public Filter Build() => new()
+        {
+            Count = _count,
+            ExcludedProxies = _excludedProxies,
+            IncludedProxies = _includedProxies,
+            Sort = _sort,
+            ExpiredState = _expiredState,
+            IsValid = _isValid,
+            IsAnonimous = _isAnonimous
+        };
 
         private int? _count;
         private readonly List<Proxy> _excludedProxies = new();
