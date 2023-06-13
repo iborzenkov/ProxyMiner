@@ -37,7 +37,7 @@ public sealed record ProxyStatus
     /// <summary>
     ///     Status code, when connecting via proxy.
     /// </summary>
-    public HttpStatusCode Status { get; private init; }
+    public HttpStatusCode? Status { get; private init; }
 
     /// <summary>
     ///     Indicates that the proxy is anonymous.

@@ -43,22 +43,16 @@ public class FilterTest
     public void Filter_Count_CountZeroAndCollectionNotEmpty()
     {
         var proxies = RegularProxis;
-        var filter = Filter.Builder.Count(0).Build();
-        
-        var filtered = new FilterApplier(proxies).Apply(filter);
-
-        CollectionAssert.AreEqual(Array.Empty<Proxy>(), filtered);
+        Assert.ThrowsException<ArgumentOutOfRangeException>(
+            () => Filter.Builder.Count(0).Build());
     }
     
     [TestMethod]
     public void Filter_Count_CountNegative()
     {
         var proxies = RegularProxis;
-        var filter = Filter.Builder.Count(-1).Build();
-        
-        var filtered = new FilterApplier(proxies).Apply(filter);
-
-        CollectionAssert.AreEqual(Array.Empty<Proxy>(), filtered);
+        Assert.ThrowsException<ArgumentOutOfRangeException>(
+            () => Filter.Builder.Count(-1).Build());
     }
 
     [TestMethod]

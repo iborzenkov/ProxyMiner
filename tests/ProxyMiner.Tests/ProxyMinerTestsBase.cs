@@ -19,6 +19,18 @@ public abstract class ProxyMinerTestsBase
         Miner.Dispose();
     }
 
+    protected void StartMiner()
+    {
+        Miner.Start();
+        Thread.Sleep(1000);
+    }
+
+    protected void StopMiner()
+    {
+        Miner.Stop();
+        Thread.Sleep(1000);
+    }
+
     protected IMiner Miner { get; private set; }
 
     protected IChecker Checker => _checker ??= GetChecker();

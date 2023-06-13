@@ -88,14 +88,13 @@ internal sealed class ProxyChecker : IDisposable
             return;
 
         IsEnabled = false;
-
-        _resetEvent.WaitOne();
         
         _commonTokenSource?.Cancel();
         _commonTokenSource?.Dispose();
 
         _proxies?.CompleteAdding();
         _proxies?.Dispose();
+        _proxies = null;
     }
 
     internal void Add(IEnumerable<Proxy> proxies)
@@ -106,8 +105,7 @@ internal sealed class ProxyChecker : IDisposable
         if (!IsEnabled)
             return;
 
-        _resetEvent.Reset();
-        try
+        Task.Run(() =>
         {
             foreach (var proxy in proxies)
             {
@@ -116,11 +114,7 @@ internal sealed class ProxyChecker : IDisposable
 
                 _proxies!.TryAdd(proxy, Timeout.Infinite, _commonTokenSource!.Token);
             }
-        }
-        finally
-        {
-            _resetEvent.Set();
-        }
+        });
     }
 
     internal void Subscribe(ICheckObserver observer)
@@ -142,7 +136,6 @@ internal sealed class ProxyChecker : IDisposable
     private BlockingCollection<Proxy>? _proxies;
     private CancellationTokenSource? _commonTokenSource;
     private bool _isEnabled;
-    private readonly ManualResetEvent _resetEvent = new(true);
 
     private readonly Settings _settings;
     private readonly IChecker _checker;

@@ -1,15 +1,14 @@
 // ReSharper disable InconsistentNaming
 
 using System.Collections.Concurrent;
-using Moq;
-using ProxyMiner.Core.Models;
 using ProxyMiner.Core.Models.BaseCollections;
 using ProxyMiner.Core.Producers;
+using ProxyMiner.Tests.Moqs;
 
 namespace ProxyMiner.Tests;
 
 [TestClass]
-public class ProducerTests : ProxyMinerTestsBase
+public class ProducerCollectionTests : ProxyMinerTestsBase
 {
     [TestMethod]
     public void ProducerCollection_ByDefault_Empty()
@@ -21,40 +20,35 @@ public class ProducerTests : ProxyMinerTestsBase
     [TestMethod]
     public void ProducerCollection_Add_Null()
     {
-        Miner.Producers.Add(item: null!);
-
-        Assert.IsFalse(Miner.Producers.Items.Any());
+        Assert.ThrowsException<ArgumentNullException>(
+            () => Miner.Producers.Add(item: null!));
     }
 
     [TestMethod]
     public void ProducerCollection_AddRange_Null()
     {
-        Miner.Producers.AddRange(items: null!);
-
-        Assert.IsFalse(Miner.Producers.Items.Any());
+        Assert.ThrowsException<ArgumentNullException>(
+            () => Miner.Producers.AddRange(items: null!));
     }
 
     [TestMethod]
     public void ProducerCollection_Remove_Null()
     {
-        Miner.Producers.Remove(item: null!);
-
-        Assert.IsFalse(Miner.Producers.Items.Any());
+        Assert.ThrowsException<ArgumentNullException>(
+            () => Miner.Producers.Remove(item: null!));
     }
 
     [TestMethod]
     public void ProducerCollection_RemoveRange_Null()
     {
-        Miner.Producers.RemoveRange(items: null!);
-
-        Assert.IsFalse(Miner.Producers.Items.Any());
+        Assert.ThrowsException<ArgumentNullException>(
+            () => Miner.Producers.RemoveRange(items: null!));
     }
 
     [TestMethod]
     public void ProducerCollection_Add_Remove()
     {
-        var producer = new Producer("TestProducer1", GetProvider());
-
+        var producer = MakeSimpleProducer();
         Miner.Producers.CollectionChanged += Producers_CollectionChanged_Add;
         try
         {
@@ -98,9 +92,9 @@ public class ProducerTests : ProxyMinerTestsBase
     [TestMethod]
     public void ProducerCollection_AndRange_RemoveRange()
     {
-        var producer1 = new Producer("TestProducer1", GetProvider());
-        var producer2 = new Producer("TestProducer2", GetProvider());
-        var producer3 = new Producer("TestProducer2", GetProvider());
+        var producer1 = MakeSimpleProducer("TestProducer1");
+        var producer2 = MakeSimpleProducer("TestProducer2");
+        var producer3 = MakeSimpleProducer("TestProducer2");
 
         Miner.Producers.CollectionChanged += Producers_CollectionChanged_Add;
         try
@@ -144,9 +138,12 @@ public class ProducerTests : ProxyMinerTestsBase
     [TestMethod]
     public void ProducerCollection_Start_ProducerEnabled()
     {
-        var producer1 = new Producer("TestProducer1", GetProvider()) { IsEnabled = true };
-        var producer2 = new Producer("TestProducer2", GetProvider()) { IsEnabled = true };
-        var producer3 = new Producer("TestProducer2", GetProvider()) { IsEnabled = true };
+        var producer1 = MakeSimpleProducer("TestProducer1");
+        producer1.IsEnabled = true;
+        var producer2 = MakeSimpleProducer("TestProducer2");
+        producer2.IsEnabled = true;
+        var producer3 = MakeSimpleProducer("TestProducer2");
+        producer3.IsEnabled = true;
 
         var miningProducers = new ConcurrentBag<Producer>();
         var minedProducers = new ConcurrentBag<Producer>();
@@ -157,9 +154,8 @@ public class ProducerTests : ProxyMinerTestsBase
         try
         {
             Miner.Producers.AddRange(new[] { producer1, producer2, producer3 });
-            Miner.Start();
-            
-            Thread.Sleep(1000);
+            StartMiner();
+
             CollectionAssert.AreEquivalent(new[] { producer1, producer2, producer3 }, miningProducers);
             CollectionAssert.AreEquivalent(new[] { producer1, producer2, producer3 }, minedProducers);
             Assert.IsTrue(code == ProxyProviderResultCode.Ok);
@@ -185,8 +181,6 @@ public class ProducerTests : ProxyMinerTestsBase
     [TestMethod]
     public void ProducerCollection_Start_NotEnabled()
     {
-        var producer1 = new Producer("TestProducer1", GetProvider());
-
         var miningProducers = new ConcurrentBag<Producer>();
         var minedProducers = new ConcurrentBag<Producer>();
 
@@ -194,10 +188,9 @@ public class ProducerTests : ProxyMinerTestsBase
         Miner.Producers.Mined += Producers_Mined;
         try
         {
-            Miner.Producers.AddRange(new[] { producer1 });
-            Miner.Start();
+            Miner.Producers.AddRange(new[] { MakeSimpleProducer() });
+            StartMiner();
 
-            Thread.Sleep(1000);
             Assert.AreEqual(0, miningProducers.Count);
             Assert.AreEqual(0, minedProducers.Count);
         }
@@ -219,9 +212,9 @@ public class ProducerTests : ProxyMinerTestsBase
     }
 
     [TestMethod]
-    public void ProducerCollection_Start_NotEnabled_WhenEnable()
+    public void ProducerCollection_Start_NotEnabled_ThenEnable()
     {
-        var producer = new Producer("TestProducer1", GetProvider());
+        var producer = MakeSimpleProducer();
 
         var miningProducers = new ConcurrentBag<Producer>();
         var minedProducers = new ConcurrentBag<Producer>();
@@ -232,14 +225,14 @@ public class ProducerTests : ProxyMinerTestsBase
         try
         {
             Miner.Producers.AddRange(new[] { producer });
-            Miner.Start();
+            StartMiner();
 
-            Thread.Sleep(1000);
             Assert.AreEqual(0, miningProducers.Count);
             Assert.AreEqual(0, minedProducers.Count);
 
             producer.IsEnabled = true;
             Thread.Sleep(1000);
+
             CollectionAssert.AreEquivalent(new[] { producer }, miningProducers);
             CollectionAssert.AreEquivalent(new[] { producer }, minedProducers);
             Assert.IsTrue(code == ProxyProviderResultCode.Ok);
@@ -265,7 +258,15 @@ public class ProducerTests : ProxyMinerTestsBase
     [TestMethod]
     public void ProducerCollection_Stop()
     {
-        var producer = new Producer("TestProducer1", GetSlowProvider()) { IsEnabled = true };
+        var producer = new Producer(
+            "TestProducer", 
+            MoqFactory.ProxyProviderBuilder
+                .ReturnOk()
+                .TimeForWork(TimeSpan.FromSeconds(5))
+                .Build()) 
+        { 
+            IsEnabled = true 
+        };
 
         var miningProducers = new ConcurrentBag<Producer>();
         var minedProducers = new ConcurrentBag<Producer>();
@@ -276,11 +277,9 @@ public class ProducerTests : ProxyMinerTestsBase
         try
         {
             Miner.Producers.AddRange(new[] { producer });
-            Miner.Start();
-            Thread.Sleep(1000);
+            StartMiner();
+            StopMiner();
 
-            Miner.Stop();
-            Thread.Sleep(1000);
             CollectionAssert.AreEquivalent(new[] { producer }, miningProducers);
             CollectionAssert.AreEquivalent(new[] { producer }, minedProducers);
             Assert.IsTrue(code == ProxyProviderResultCode.Cancelled);
@@ -303,27 +302,6 @@ public class ProducerTests : ProxyMinerTestsBase
         }
     }
 
-    private IProxyProvider GetSlowProvider()
-    {
-        var providerMock = new Mock<IProxyProvider>();
-        providerMock.Setup(p => p.GetProxies(It.IsAny<CancellationToken>()))
-            .Returns(new InvocationFunc(i => Task.Run(() =>
-            {
-                var token = (CancellationToken)i.Arguments[0];
-                token.WaitHandle.WaitOne(5000);
-                token.ThrowIfCancellationRequested();
-                return ProxyProviderResult.Ok(Enumerable.Empty<Proxy>());
-            })));
-
-        return providerMock.Object;
-    }
-
-    private IProxyProvider GetProvider()
-    {
-        var providerMock = new Mock<IProxyProvider>();
-        providerMock.Setup(p => p.GetProxies(It.IsAny<CancellationToken>()))
-            .Returns(() => Task.FromResult(ProxyProviderResult.Ok(Enumerable.Empty<Proxy>())));
-
-        return providerMock.Object;
-    }
+    private static Producer MakeSimpleProducer(string? name = null) =>
+        new(name ?? "TestProducer", MoqFactory.ProxyProviderBuilder.ReturnOk().Build());
 }
