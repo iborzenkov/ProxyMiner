@@ -31,7 +31,7 @@ public class FilterTest
     [TestMethod]
     public void Filter_Count_CountNotZeroAndCollectionEmpty()
     {
-        var proxies = new Dictionary<Proxy, ProxyState>();
+        var proxies = new List<StateOfProxy>();
         var filter = Filter.Builder.Count(3).Build();
         
         var filtered = new FilterApplier(proxies).Apply(filter);
@@ -165,12 +165,12 @@ public class FilterTest
     private static Proxy MakeProxy(ProxyType type, string host, int port)
         => Proxy.Factory.TryMakeProxy(type, host, port, out _)!;
 
-    private static readonly Dictionary<Proxy, ProxyState> RegularProxis = new()
+    private static readonly List<StateOfProxy> RegularProxis = new()
     {
-        { Proxy1, new ProxyState(new DateTime(2023, 1, 25), new DateTime(2023, 1, 26), ProxyStatus.Anonimous) },
-        { Proxy2, new ProxyState(new DateTime(2023, 1, 23), new DateTime(2023, 1, 24), ProxyStatus.Cancelled) },
-        { Proxy3, new ProxyState(new DateTime(2023, 1, 27), new DateTime(2023, 1, 28), ProxyStatus.NotAnonimous) },
-        { Proxy4, new ProxyState(new DateTime(2023, 1, 21), new DateTime(2023, 1, 22), ProxyStatus.Anonimous) },
-        { Proxy6, new ProxyState(new DateTime(2023, 1, 19), new DateTime(2023, 1, 20), ProxyStatus.Timeout) },
+        { new StateOfProxy(Proxy1, new ProxyState(new DateTime(2023, 1, 25), new DateTime(2023, 1, 26), ProxyStatus.Anonimous)) },
+        { new StateOfProxy(Proxy2, new ProxyState(new DateTime(2023, 1, 23), new DateTime(2023, 1, 24), ProxyStatus.Cancelled)) },
+        { new StateOfProxy(Proxy3, new ProxyState(new DateTime(2023, 1, 27), new DateTime(2023, 1, 28), ProxyStatus.NotAnonimous)) },
+        { new StateOfProxy(Proxy4, new ProxyState(new DateTime(2023, 1, 21), new DateTime(2023, 1, 22), ProxyStatus.Anonimous)) },
+        { new StateOfProxy(Proxy6, new ProxyState(new DateTime(2023, 1, 19), new DateTime(2023, 1, 20), ProxyStatus.Timeout)) },
     };
 }

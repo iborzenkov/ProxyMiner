@@ -7,7 +7,7 @@ namespace ProxyMiner.Core.Producers;
 
 internal sealed class ProducerTask : IDisposable
 {
-    public ProducerTask(
+    internal ProducerTask(
         Producer producer, Settings settings, 
         Action<Producer, DateTime> miningStart,
         Action<Producer, DateTime, ProxyProviderResult> miningFinished)

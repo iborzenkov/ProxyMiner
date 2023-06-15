@@ -70,10 +70,12 @@ namespace ProxyMiner.Demo.ViewModels
                 () => SaveProxies("all.csv", _miner.Proxies.Items), 
                 () => _miner.Proxies.Items.Any());
             SaveValidProxies = new RelayCommand(
-                () => SaveProxies("valid.csv", _miner.Proxies.GetProxies(Filter.Builder.Valid(true).Build())), 
+                () => SaveProxies("valid.csv", _miner.ProxyFilter.Apply(
+                    Filter.Builder.Valid(true).Build())), 
                 () => _miner.Proxies.Items.Any());
             SaveAnonimousProxies = new RelayCommand(
-                () => SaveProxies("anonimous.csv", _miner.Proxies.GetProxies(Filter.Builder.Anonimous(true).Build())), 
+                () => SaveProxies("anonimous.csv", _miner.ProxyFilter.Apply(
+                    Filter.Builder.Anonimous(true).Build())), 
                 () => _miner.Proxies.Items.Any());
             
             CheckSelectedProxies = new RelayCommand(

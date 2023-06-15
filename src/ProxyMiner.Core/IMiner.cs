@@ -1,4 +1,5 @@
 ﻿using ProxyMiner.Core.Checkers;
+using ProxyMiner.Core.Filters;
 using ProxyMiner.Core.Models.ProxyCollections;
 using ProxyMiner.Core.Producers;
 
@@ -25,6 +26,11 @@ public interface IMiner : IDisposable
     ///     Collection of proxy.
     /// </summary>
     IProxyCollection Proxies { get; }
+
+    /// <summary>
+    ///     Allows you to get a collection of proxies by the specified filter.
+    /// </summary>
+    IProxyFilter ProxyFilter { get; }
 
     /// <summary>
     ///     The controlling mechanism for checking the proxy for validity.

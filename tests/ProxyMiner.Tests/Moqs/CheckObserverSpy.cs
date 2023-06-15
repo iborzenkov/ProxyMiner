@@ -5,7 +5,7 @@ namespace ProxyMiner.Tests.Moqs
 {
     internal sealed class CheckObserverSpy : ICheckObserver, IDisposable
     {
-        public CheckObserverSpy(List<Proxy>? etalonCheckingProxies, 
+        internal CheckObserverSpy(List<Proxy>? etalonCheckingProxies, 
             List<Proxy>? etalonCheckedProxies, List<Proxy>? etalonPossibleCheckingProxies)
         {
             _etalonCheckingProxies = etalonCheckingProxies;
@@ -27,7 +27,7 @@ namespace ProxyMiner.Tests.Moqs
 
         public void Checked(ProxyCheckedEventArgs args)
         {
-            _actualCheckedProxies.Add(args.Proxy);
+            _actualCheckedProxies.Add(args.StateOfProxy);
         }
 
         private void Check()
@@ -53,6 +53,6 @@ namespace ProxyMiner.Tests.Moqs
         private readonly List<Proxy>? _etalonCheckedProxies;
         private readonly List<Proxy>? _etalonPossibleCheckingProxies;
         private readonly List<Proxy> _actualCheckingProxies = new();
-        private readonly List<Proxy> _actualCheckedProxies = new();
+        private readonly List<StateOfProxy> _actualCheckedProxies = new();
     }
 }

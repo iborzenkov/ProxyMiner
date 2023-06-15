@@ -10,13 +10,16 @@ namespace ProxyMiner.Core.Checkers;
 
 internal sealed class ProxyCheckerController : ICheckerController, ICheckObserver
 {
-    public ProxyCheckerController(ProxyCollection proxies, ProxyChecker checker, Settings settings)
+    internal ProxyCheckerController(ProxyCollection proxies, ProxyChecker checker, 
+        IProxyFilter filter, Settings settings)
     {
         _proxies = proxies ?? throw new ArgumentNullException(nameof(proxies));
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
         _checker = checker ?? throw new ArgumentNullException(nameof(checker));
         _checker.Subscribe(this);
+
+        _filter = filter ?? throw new ArgumentNullException(nameof(filter));
 
         _timer = new Timer(TimerIntervalMilliseconds) { Enabled = _checker.IsEnabled };
         _timer.Elapsed += TimerElapsed;
@@ -73,7 +76,6 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
         if (args == null)
             throw new ArgumentNullException(nameof(args));
 
-        _proxies.SetProxyState(args.Proxy, ProxyState.StartChecking(args.StartTimeUtc));
         Checking.Invoke(this, args);
     }
 
@@ -82,26 +84,23 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
         if (args == null)
             throw new ArgumentNullException(nameof(args));
 
-        _proxies.SetProxyState(args.Proxy, args.State);
-
-        _inProgress.TryRemove(args.Proxy, out _);
+        _inProgress.TryRemove(args.StateOfProxy.Proxy, out _);
         Checked.Invoke(this, args);
     }
-    
+
     private void TimerElapsed(object? sender, ElapsedEventArgs e)
     {
         if (_checker.FreeCheckSlot == 0)
             return;
 
-        var proxies = _proxies.GetProxies(
+        var proxies = _filter.Apply(
             Filter.Builder
                 .Count(_checker.FreeCheckSlot)
                 .Except(_inProgress.Keys.Concat(_blocked))
                 .Include(_highPriority)
                 .StateNotExpired(_settings.ExpiredProxyActualState)
                 .SortedBy(SortingField.LastCheck, SortDirection.Asceding)
-                .Build()
-            ).ToList();
+                .Build()).ToList();
 
         if (_highPriority.Any())
         {
@@ -122,6 +121,7 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
     private readonly ProxyCollection _proxies;
     private readonly Settings _settings;
     private readonly ProxyChecker _checker;
+    private readonly IProxyFilter _filter;
     private readonly Timer _timer;
     private readonly ConcurrentDictionary<Proxy,bool> _inProgress = new();
     private readonly List<Proxy> _highPriority = new();

@@ -6,7 +6,7 @@ namespace ProxyMiner.Core.Producers;
 
 internal sealed class ProducerCollection : IProducerCollection
 {
-    public ProducerCollection(Settings settings)
+    internal ProducerCollection(Settings settings)
     {
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }

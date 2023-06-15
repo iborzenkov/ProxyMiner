@@ -7,19 +7,13 @@ namespace ProxyMiner.Core.Checkers;
 /// </summary>
 public sealed class ProxyCheckedEventArgs : EventArgs
 {
-    internal ProxyCheckedEventArgs(Proxy proxy, ProxyState state)
+    internal ProxyCheckedEventArgs(StateOfProxy stateOfProxy)
     {
-        Proxy = proxy ?? throw new ArgumentNullException(nameof(proxy));
-        State = state;
+        StateOfProxy = stateOfProxy ?? throw new ArgumentNullException(nameof(stateOfProxy));
     }
-
-    /// <summary>
-    ///     Proxy.
-    /// </summary>
-    public Proxy Proxy { get; }
 
     /// <summary>
     ///     Proxy state after verification.
     /// </summary>
-    public ProxyState State { get; }
+    public StateOfProxy StateOfProxy { get; }
 }

@@ -11,32 +11,27 @@ internal static class ProxyComparerFactory
     ///     Build proxy comparer.
     /// </summary>
     /// <param name="sort">Specifying sorting.</param>
-    /// <param name="stateFinder">The delegate returns the state of the specifyed proxy.</param>
     /// <returns>Proxy comparer</returns>
     /// <exception cref="ArgumentOutOfRangeException">Occurs if the sorting direction is not implemented.</exception>
-    internal static IComparer<Proxy> Make(ProxySort sort, Func<Proxy, ProxyState> stateFinder)
+    internal static IComparer<StateOfProxy> Make(ProxySort sort)
     {
         switch (sort.Field)
         {
             case SortingField.LastCheck:
-                if (stateFinder == null)
-                    throw new ArgumentNullException(nameof(stateFinder));
-                
-                return new LastCheckProxyComparer(sort.Direction, stateFinder);
+                return new LastCheckProxyComparer(sort.Direction);
             default:
                 throw new ArgumentOutOfRangeException($"Sorting for '{sort.Field}' is not implemented");
         }
     }
 
-    private class LastCheckProxyComparer : IComparer<Proxy>
+    private class LastCheckProxyComparer : IComparer<StateOfProxy>
     {
-        public LastCheckProxyComparer(SortDirection direction, Func<Proxy, ProxyState> stateFinder)
+        public LastCheckProxyComparer(SortDirection direction)
         {
             _direction = direction;
-            _stateFinder = stateFinder ?? throw new ArgumentNullException(nameof(stateFinder));
         }
 
-        public int Compare(Proxy? x, Proxy? y)
+        public int Compare(StateOfProxy? x, StateOfProxy? y)
         {
             if (x == null && y == null)
                 return 0;
@@ -47,8 +42,8 @@ internal static class ProxyComparerFactory
             if (x.Equals(y))
                 return 0;
 
-            var stateX = _stateFinder(x);
-            var stateY = _stateFinder(y);
+            var stateX = x.State;
+            var stateY = y.State;
 
             if (stateX == null && stateY == null)
                 return 0;
@@ -73,6 +68,5 @@ internal static class ProxyComparerFactory
         }
 
         private SortDirection _direction;
-        private readonly Func<Proxy, ProxyState> _stateFinder;
     }
 }

@@ -22,7 +22,7 @@ internal sealed class ProxyCollection : IProxyCollection
         var addedItems = new List<Proxy>();
         foreach (var proxy in proxies.Where(proxy => proxy != null).ToList())
         {
-            if (!_items.ContainsKey(proxy) && _items.TryAdd(proxy, ProxyState.NotDefined))
+            if (!_items.ContainsKey(proxy) && _items.TryAdd(proxy, IgnoredValue))
             {
                 addedItems.Add(proxy);
             }
@@ -58,32 +58,11 @@ internal sealed class ProxyCollection : IProxyCollection
 
     public IEnumerable<Proxy> Items => _items.Keys;
 
-    public IEnumerable<Proxy> GetProxies(Filter filter)
-    {
-        if (filter == null)
-            throw new ArgumentNullException(nameof(filter));
-
-        var proxyWithState = _items.ToDictionary(i => i.Key, i => i.Value);
-        var applier = new FilterApplier(proxyWithState);
-        return applier.Apply(filter);
-    }
-
     public event EventHandler<CollectionChangedEventArgs<Proxy>> CollectionChanged = (_, _) => { };
-
-    internal void SetProxyState(Proxy proxy, ProxyState state)
-    {
-        if (proxy == null)
-            throw new ArgumentNullException(nameof(proxy));
-
-        // todo: here you can add an item to the collection that was previously deleted by another thread
-        if (_items.ContainsKey(proxy))
-        {
-            _items[proxy] = state;
-        }
-    }
 
     private void OnCollectionChanged(CollectionChangedEventArgs<Proxy> args)
         => CollectionChanged.Invoke(this, args);
 
-    private readonly ConcurrentDictionary<Proxy, ProxyState> _items = new();
+    private readonly ConcurrentDictionary<Proxy, bool> _items = new();
+    private const bool IgnoredValue = false;
 }

@@ -5,7 +5,7 @@
 /// </summary>
 internal sealed class SettingsFileWatcher : IDisposable
 {
-    public SettingsFileWatcher(ISettingsFileReader reader, string filename, Action<Settings> applySettings)
+    internal SettingsFileWatcher(ISettingsFileReader reader, string filename, Action<Settings> applySettings)
     {
         _reader = reader ?? throw new ArgumentNullException(nameof(reader));
         _applySettings = applySettings ?? throw new ArgumentNullException(nameof(applySettings));

@@ -1,4 +1,5 @@
 ﻿using ProxyMiner.Core.Checkers;
+using ProxyMiner.Core.Filters;
 using ProxyMiner.Core.Models.ProxyCollections;
 using ProxyMiner.Core.Options;
 using ProxyMiner.Core.Producers;
@@ -7,7 +8,7 @@ namespace ProxyMiner.Core;
 
 internal sealed class Miner : IMiner
 {
-    public Miner(IChecker checker, ISettingsProvider settingsProvider)
+    internal Miner(IChecker checker, ISettingsProvider settingsProvider)
     {
         if (checker == null)
             throw new ArgumentNullException(nameof(checker));
@@ -23,8 +24,11 @@ internal sealed class Miner : IMiner
         _proxies = new ProxyCollection();
 
         _proxyChecker = new ProxyChecker(checker, settings);
-        
-        _proxyCheckerController = new ProxyCheckerController(_proxies, _proxyChecker, settings);
+
+        _proxyFilter = new ProxyFilter(_proxies, _proxyChecker);
+
+        _proxyCheckerController = new ProxyCheckerController(
+            _proxies, _proxyChecker, _proxyFilter, settings);
     }
     
     void IDisposable.Dispose()
@@ -38,6 +42,7 @@ internal sealed class Miner : IMiner
     public IProducerCollection Producers => _producers;
     public IProxyCollection Proxies => _proxies;
     public ICheckerController Checker => _proxyCheckerController;
+    public IProxyFilter ProxyFilter => _proxyFilter;
 
     void IMiner.Start()
     {
@@ -63,4 +68,5 @@ internal sealed class Miner : IMiner
     private readonly ProxyCollection _proxies;
     private readonly ProxyChecker _proxyChecker;
     private readonly ICheckerController _proxyCheckerController;
+    private readonly IProxyFilter _proxyFilter;
 }

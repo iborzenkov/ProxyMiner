@@ -61,16 +61,16 @@ internal sealed class ProxyChecker : IDisposable
                         try
                         {
                             var status = await _checker.Check(proxy, linkedTokenSource.Token);
-                            _observers.ForEach(o => o.Checked(
-                                new ProxyCheckedEventArgs(proxy, new ProxyState(startDate, DateTime.UtcNow, status))));
+                            _observers.ForEach(o => o.Checked(new ProxyCheckedEventArgs(
+                                new StateOfProxy(proxy, new ProxyState(startDate, DateTime.UtcNow, status)))));
                         }
                         catch (OperationCanceledException)
                         {
                             var status = timeoutTokenSource.IsCancellationRequested
                                 ? ProxyStatus.Timeout
                                 : ProxyStatus.Cancelled;
-                            _observers.ForEach(o => o.Checked(
-                                new ProxyCheckedEventArgs(proxy, new ProxyState(startDate, DateTime.UtcNow, status))));
+                            _observers.ForEach(o => o.Checked(new ProxyCheckedEventArgs(
+                                new StateOfProxy(proxy, new ProxyState(startDate, DateTime.UtcNow, status)))));
                         }
                     }
                 }

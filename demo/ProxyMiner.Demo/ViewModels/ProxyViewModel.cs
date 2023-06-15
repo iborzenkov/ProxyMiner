@@ -93,11 +93,11 @@ namespace ProxyMiner.Demo.ViewModels
 
         private void ProxyChecked(object? sender, ProxyCheckedEventArgs args)
         {
-            if (args.Proxy.Equals(Proxy))
+            if (args.StateOfProxy.Proxy.Equals(Proxy))
             {
-                SetStatus(args.State.Status);
-                StartCheckUtc = args.State.StartTimeUtc;
-                FinishCheckUtc = args.State.FinishTimeUtc;
+                SetStatus(args.StateOfProxy.State.Status);
+                StartCheckUtc = args.StateOfProxy.State.StartTimeUtc;
+                FinishCheckUtc = args.StateOfProxy.State.FinishTimeUtc;
             }
         }
 

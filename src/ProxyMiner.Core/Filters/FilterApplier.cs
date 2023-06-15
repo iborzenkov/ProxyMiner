@@ -7,9 +7,10 @@ namespace ProxyMiner.Core.Filters;
 /// </summary>
 internal sealed class FilterApplier
 {
-    public FilterApplier(Dictionary<Proxy, ProxyState> proxyWithState)
+    internal FilterApplier(IEnumerable<StateOfProxy> proxyStates)
     {
-        _proxyWithState = proxyWithState ?? throw new ArgumentNullException(nameof(proxyWithState));
+        _proxyStates = proxyStates.ToHashSet() 
+            ?? throw new ArgumentNullException(nameof(proxyStates));
     }
     
     public List<Proxy> Apply(Filter filter)
@@ -17,46 +18,48 @@ internal sealed class FilterApplier
         if (filter == null)
             throw new ArgumentNullException(nameof(filter));
         
-        var allProxies = _proxyWithState.Select(p => p.Key).ToList();
-        var withoutExcluded = allProxies.Except(filter.ExcludedProxies).ToList();
+        var allProxies = _proxyStates.ToList();
+        var withoutExcluded = allProxies.Except(
+            _proxyStates.Where(ps => filter.ExcludedProxies.Contains(ps.Proxy))).ToList();
         var valided = GetValidProxies(withoutExcluded, filter.IsValid);
         var anonimous = GetAnonimousProxies(valided, filter.IsAnonimous);
         var withNotActualStates = GetProxiesWithNotActualStates(anonimous, filter.ExpiredState);
         var sorted = SortIfNeed(withNotActualStates, filter.Sort);
-        sorted.InsertRange(0, filter.IncludedProxies.Except(filter.ExcludedProxies));
-
+        
+        var proxies = sorted.Select(ps => ps.Proxy).ToList();
+        proxies.InsertRange(0, filter.IncludedProxies.Except(filter.ExcludedProxies));
         return filter.Count == null
-            ? sorted
-            : sorted.Take(filter.Count ?? sorted.Count).ToList();
+            ? proxies
+            : proxies.Take(filter.Count ?? proxies.Count).ToList();
     }
     
-    private List<Proxy> SortIfNeed(List<Proxy> proxies, ProxySort? sort)
+    private List<StateOfProxy> SortIfNeed(List<StateOfProxy> proxies, ProxySort? sort)
     {
         if (sort != null)
         {
-            proxies.Sort(ProxyComparerFactory.Make(sort, proxy => _proxyWithState[proxy]));
+            proxies.Sort(ProxyComparerFactory.Make(sort));
         }
 
         return proxies;
     }
 
-    private List<Proxy> GetProxiesWithNotActualStates(List<Proxy> proxies, TimeSpan? expiredState)
+    private List<StateOfProxy> GetProxiesWithNotActualStates(List<StateOfProxy> proxies, TimeSpan? expiredState)
     {
         if (expiredState == null)
             return proxies;
 
-        var result = new List<Proxy>();
+        var result = new List<StateOfProxy>();
 
         foreach (var proxy in proxies)
         {
-            var state = _proxyWithState[proxy];
-            if (state.FinishTimeUtc == null || (state.Status != null && state.Status.IsCancelled))
+            if (proxy.State.FinishTimeUtc == null 
+                || (proxy.State.Status != null && proxy.State.Status.IsCancelled))
             {
                 result.Add(proxy);
             }
             else
             {
-                if (state.FinishTimeUtc.Value + expiredState.Value <= DateTime.UtcNow)
+                if (proxy.State.FinishTimeUtc.Value + expiredState.Value <= DateTime.UtcNow)
                     result.Add(proxy);
             }
         }
@@ -64,43 +67,43 @@ internal sealed class FilterApplier
         return result;
     }
     
-    private List<Proxy> GetValidProxies(List<Proxy> proxies, bool? isValid)
+    private List<StateOfProxy> GetValidProxies(List<StateOfProxy> proxies, bool? isValid)
     {
         if (isValid == null)
             return proxies;
 
-        var result = new List<Proxy>();
+        var result = new List<StateOfProxy>();
         foreach (var proxy in proxies)
         {
-            var state = _proxyWithState[proxy];
-            if (state.Status == null)
+            if (proxy.State.Status == null)
                 continue;
 
-            if (state.Status.IsValid && isValid.Value || !state.Status.IsValid && !isValid.Value)
+            if (proxy.State.Status.IsValid && isValid.Value 
+                || !proxy.State.Status.IsValid && !isValid.Value)
                 result.Add(proxy);
         }
 
         return result;
     }
     
-    private List<Proxy> GetAnonimousProxies(List<Proxy> proxies, bool? isAnonimous)
+    private List<StateOfProxy> GetAnonimousProxies(List<StateOfProxy> proxies, bool? isAnonimous)
     {
         if (isAnonimous == null)
             return proxies;
 
-        var result = new List<Proxy>();
+        var result = new List<StateOfProxy>();
         foreach (var proxy in proxies)
         {
-            var state = _proxyWithState[proxy];
-            if (state.Status == null)
+            if (proxy.State.Status == null)
                 continue;
 
-            if (state.Status.IsAnonimous && isAnonimous.Value || !state.Status.IsAnonimous && !isAnonimous.Value)
+            if (proxy.State.Status.IsAnonimous && isAnonimous.Value 
+                || !proxy.State.Status.IsAnonimous && !isAnonimous.Value)
                 result.Add(proxy);
         }
 
         return result;
     }
 
-    private readonly Dictionary<Proxy, ProxyState> _proxyWithState;
+    private readonly HashSet<StateOfProxy> _proxyStates;
 }
