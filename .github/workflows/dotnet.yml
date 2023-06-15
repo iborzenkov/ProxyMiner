@@ -1,4 +1,4 @@
-name: build
+name: build && test
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -17,13 +17,23 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
+    
     - name: Build ProxyMiner.Core
       run: dotnet build src/ProxyMiner.Core
+    
     - name: Build ProxyMiner.Checkers
       run: dotnet build src/ProxyMiner.Checkers
+    
     - name: Build ProxyMiner.Providers
       run: dotnet build src/ProxyMiner.Providers
+    
     - name: Build ProxyMiner.Tests
       run: dotnet build tests/ProxyMiner.Tests
+
+  test:
+    name: Test
+    needs: build
+    steps:
     - name: Test
       run: dotnet test --no-build --verbosity normal
+  
