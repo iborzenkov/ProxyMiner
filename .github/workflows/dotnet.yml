@@ -23,5 +23,7 @@ jobs:
       run: dotnet build src/ProxyMiner.Checkers
     - name: Build ProxyMiner.Providers
       run: dotnet build src/ProxyMiner.Providers
+    - name: Build ProxyMiner.Tests
+      run: dotnet build tests/ProxyMiner.Tests
     - name: Test
-      run: dotnet test --verbosity normal
+      run: dotnet test --no-build --verbosity normal
