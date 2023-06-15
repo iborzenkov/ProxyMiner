@@ -117,7 +117,7 @@ public class ProxyCheckerTest
             Assert.AreEqual(3, proxyChecker.FreeCheckSlot);
 
             proxyChecker.Add(new[] { Proxy1, Proxy2, Proxy3, Proxy4, Proxy5 });
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
             Assert.AreEqual(1, proxyChecker.FreeCheckSlot, "3 proxies in progress, 2 proxies in queue, 1 free slot in queue");
         }
         finally
