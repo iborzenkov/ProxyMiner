@@ -17,13 +17,11 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore
     - name: Build ProxyMiner.Core
-      run: dotnet build --no-restore src/ProxyMiner.Core
+      run: dotnet build src/ProxyMiner.Core
     - name: Build ProxyMiner.Checkers
-      run: dotnet build --no-restore src/ProxyMiner.Checkers
+      run: dotnet build src/ProxyMiner.Checkers
     - name: Build ProxyMiner.Providers
-      run: dotnet build --no-restore src/ProxyMiner.Providers
+      run: dotnet build src/ProxyMiner.Providers
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --verbosity normal
