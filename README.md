@@ -1,5 +1,5 @@
 # ProxyMiner
-[![Build status](https://ci.appveyor.com/api/projects/status/voi6r3ra0dgcxwe5/branch/master?svg=true)](https://ci.appveyor.com/project/iborzenkov/proxyminer/branch/master)
+[![Build](https://github.com/iborzenkov/ProxyMiner/actions/workflows/dotnet.yml/badge.svg)](https://github.com/iborzenkov/ProxyMiner/actions/workflows/dotnet.yml)
 
 .NET Proxy Miner
 ProxyMiner searches for proxies in the specified sources and checks their status and level of anonymity by connecting to the specified sites through them.
