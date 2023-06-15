@@ -105,9 +105,10 @@ internal sealed class ProxyChecker : IDisposable
         if (!IsEnabled)
             return;
 
+        var localProxies = proxies.ToList();
         Task.Run(() =>
         {
-            foreach (var proxy in proxies)
+            foreach (var proxy in localProxies)
             {
                 if (_commonTokenSource!.IsCancellationRequested)
                     break;

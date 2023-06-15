@@ -105,10 +105,6 @@ public class ProxyCheckerTest
         var checkThreadCount = 3;
         var settings = new Settings { CheckThreadCount = checkThreadCount };
         var proxyChecker = new ProxyChecker(checker, settings);
-        using var checkObserver = MoqFactory.CheckObserverBuilder
-            .CheckingFromThese(new[] { Proxy1, Proxy2, Proxy3 })
-            .Build();
-        proxyChecker.Subscribe(checkObserver);
 
         proxyChecker.Start();
         try
