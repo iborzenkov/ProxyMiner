@@ -100,7 +100,7 @@ public class ProxyCollectionTests : ProxyMinerTestsBase
         Miner.Proxies.CollectionChanged += Proxies_CollectionChanged_Add;
         try
         {
-            Miner.Proxies.AddRange(new[] { proxy1, null!, proxy2, proxy3, null! });
+            Miner.Proxies.AddRange([proxy1, null, proxy2, proxy3, null]);
             CollectionAssert.AreEquivalent(new[] { proxy1, proxy2, proxy3 }, Miner.Proxies.Items.ToArray());
         }
         finally
@@ -111,7 +111,7 @@ public class ProxyCollectionTests : ProxyMinerTestsBase
         Miner.Proxies.CollectionChanged += Proxies_CollectionChanged_Remove;
         try
         {
-            Miner.Proxies.RemoveRange(new[] { proxy1, proxy3, null! });
+            Miner.Proxies.RemoveRange([proxy1, proxy3, null]);
             CollectionAssert.AreEquivalent(new[] { proxy2 }, Miner.Proxies.Items.ToArray());
         }
         finally

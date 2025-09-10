@@ -2,115 +2,115 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Kaspirin.UI.Framework.Threading;
 using ProxyMiner.Core.Producers;
 
-namespace ProxyMiner.Demo.ViewModels
+namespace ProxyMiner.Demo.ViewModels;
+
+public sealed class SourceViewModel : INotifyPropertyChanged, IDisposable
 {
-    public sealed class SourceViewModel : INotifyPropertyChanged, IDisposable
+    public SourceViewModel(Producer producer, IProducerCollection producers)
     {
-        public SourceViewModel(Producer producer, IProducerCollection producers)
-        {
-            _producer = producer;
+        Producer = producer;
 
-            _producers = producers;
-            _producers.Mining += ProxyMining;
-            _producers.Mined += ProxyMined;
+        _producers = producers;
+        _producers.Mining += ProxyMining;
+        _producers.Mined += ProxyMined;
+    }
+
+    public void Dispose()
+    {
+        _producers.Mining -= ProxyMining;
+        _producers.Mined -= ProxyMined;
+    }
+
+    public Producer Producer { get; }
+
+    public DateTime? StartTimeUtc
+    {
+        get => _startTimeUtc;
+        private set
+        {
+            _startTimeUtc = value;
+            OnChanged();
+            OnChanged(nameof(DurationInSec));
         }
-
-        public void Dispose()
+    }
+    public DateTime? FinishTimeUtc
+    {
+        get => _finishTimeUtc;
+        private set
         {
-            _producers.Mining -= ProxyMining;
-            _producers.Mined -= ProxyMined;
+            _finishTimeUtc = value;
+            OnChanged();
+            OnChanged(nameof(DurationInSec));
         }
-
-        public string Name => _producer.Name;
-
-        public bool IsEnabled
+    }
+    
+    public double? DurationInSec
+    {
+        get
         {
-            get => _producer.IsEnabled;
-            set => _producer.IsEnabled = value;
+            return (StartTimeUtc == null || FinishTimeUtc == null) 
+                ? null
+                : (FinishTimeUtc - StartTimeUtc).Value.TotalSeconds;
         }
-
-        public DateTime? StartTimeUtc
+    }
+    
+    public int? TotalCount 
+    {
+        get => _totalCount;
+        private set
         {
-            get => _startTimeUtc;
-            private set
-            {
-                _startTimeUtc = value;
-                OnChanged();
-                OnChanged(nameof(DurationInSec));
-            }
+            _totalCount = value;
+            OnChanged();
         }
-        public DateTime? FinishTimeUtc
-        {
-            get => _finishTimeUtc;
-            private set
-            {
-                _finishTimeUtc = value;
-                OnChanged();
-                OnChanged(nameof(DurationInSec));
-            }
-        }
-        
-        public double? DurationInSec
-        {
-            get
-            {
-                return (StartTimeUtc == null || FinishTimeUtc == null) 
-                    ? null
-                    : (FinishTimeUtc - StartTimeUtc).Value.TotalSeconds;
-            }
-        }
-        
-        public int? TotalCount 
-        {
-            get => _totalCount;
-            private set
-            {
-                _totalCount = value;
-                OnChanged();
-            }
-        }
+    }
 
-        public ProxyProviderResultCode? ResultCode
+    public ProxyProviderResultCode? ResultCode
+    {
+        get => _resultCode;
+        private set
         {
-            get => _resultCode;
-            private set
-            {
-                _resultCode = value;
-                OnChanged();
-            }
+            _resultCode = value;
+            OnChanged();
         }
+    }
 
-        public string? ErrorMessage
+    public string? ErrorMessage
+    {
+        get => _errorMessage;
+        private set
         {
-            get => _errorMessage;
-            private set
-            {
-                _errorMessage = value;
-                OnChanged();
-            }
+            _errorMessage = value;
+            OnChanged();
         }
+    }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void ProxyMining(object? sender, ProxyMiningEventArgs args)
+    private void ProxyMining(object? sender, ProxyMiningEventArgs args)
+    {
+        if (args.Producer != Producer)
+            return;
+
+        Executers.InUiAsync(() =>
         {
-            if (args.Producer != _producer)
-                return;
-
             StartTimeUtc = args.StartTimeUtc;
             FinishTimeUtc = null;
             TotalCount = null;
             ResultCode = null;
             ErrorMessage = null;
-        }
+        });
+    }
 
-        private void ProxyMined(object? sender, ProxyMinedEventArgs args)
+    private void ProxyMined(object? sender, ProxyMinedEventArgs args)
+    {
+        if (args.Producer != Producer)
+            return;
+
+        Executers.InUiAsync(() =>
         {
-            if (args.Producer != _producer)
-                return;
-
             FinishTimeUtc = args.FinishTimeUtc;
             TotalCount = args.MiningResult.Proxies.Count();
             ResultCode = args.MiningResult.Code;
@@ -119,20 +119,19 @@ namespace ProxyMiner.Demo.ViewModels
                 : args.MiningResult.Code == ProxyProviderResultCode.Error
                     ? args.MiningResult.Exception!.Message
                     : null;
-        }
-
-        private void OnChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private readonly Producer _producer;
-        private readonly IProducerCollection _producers;
-        
-        private DateTime? _startTimeUtc;
-        private DateTime? _finishTimeUtc;
-        private int? _totalCount;
-        private ProxyProviderResultCode? _resultCode;
-        private string? _errorMessage;
+        });
     }
+
+    private void OnChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private readonly IProducerCollection _producers;
+    
+    private DateTime? _startTimeUtc;
+    private DateTime? _finishTimeUtc;
+    private int? _totalCount;
+    private ProxyProviderResultCode? _resultCode;
+    private string? _errorMessage;
 }

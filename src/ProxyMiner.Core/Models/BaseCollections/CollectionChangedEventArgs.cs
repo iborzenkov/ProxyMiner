@@ -15,17 +15,15 @@ public sealed class CollectionChangedEventArgs<T> : EventArgs
 
     internal static CollectionChangedEventArgs<T> RemoveEventArgs(ICollection<T> items)
     {
-        if (items == null)
-            throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         return new CollectionChangedEventArgs<T>(CollectionChangeAction.Remove, null, items);
     }
 
     internal static CollectionChangedEventArgs<T> AddEventArgs(ICollection<T> items)
     {
-        if (items == null)
-            throw new ArgumentNullException(nameof(items));
-        
+        ArgumentNullException.ThrowIfNull(items);
+
         return new CollectionChangedEventArgs<T>(CollectionChangeAction.Add, items, null);
     }
 

@@ -1,5 +1,4 @@
-﻿using ProxyMiner.Core.Filters;
-using ProxyMiner.Core.Models;
+﻿using ProxyMiner.Core.Models;
 
 namespace ProxyMiner.Core.Checkers;
 

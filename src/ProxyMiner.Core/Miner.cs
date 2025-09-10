@@ -10,12 +10,9 @@ internal sealed class Miner : IMiner
 {
     internal Miner(IChecker checker, ISettingsProvider settingsProvider)
     {
-        if (checker == null)
-            throw new ArgumentNullException(nameof(checker));
-        
-        if (settingsProvider == null)
-            throw new ArgumentNullException(nameof(settingsProvider));
-        
+        ArgumentNullException.ThrowIfNull(checker);
+        ArgumentNullException.ThrowIfNull(settingsProvider);
+
         var settings = settingsProvider.Settings;
 
         _producers = new ProducerCollection(settings);

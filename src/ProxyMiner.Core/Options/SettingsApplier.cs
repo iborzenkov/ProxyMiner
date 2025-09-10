@@ -9,9 +9,8 @@ internal sealed class SettingsApplier
 
     internal void Apply(Settings newSettings)
     {
-        if (newSettings == null)
-            throw new ArgumentNullException(nameof(newSettings));
-        
+        ArgumentNullException.ThrowIfNull(newSettings);
+
         using var _ = _settings.BeginApply();
         
         _settings.SourceTimeout = newSettings.SourceTimeout;

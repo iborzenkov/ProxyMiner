@@ -1,5 +1,8 @@
 namespace ProxyMiner.Core.Models;
 
+/// <summary>
+///     Factory interface for creating proxy instances.
+/// </summary>
 public interface IProxyFactory
 {
     /// <summary>

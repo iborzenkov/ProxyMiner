@@ -2,6 +2,9 @@
 
 namespace ProxyMiner.Core.Checkers;
 
+/// <summary>
+///     Interface for proxy checking functionality.
+/// </summary>
 public interface IChecker
 {
     /// <summary>

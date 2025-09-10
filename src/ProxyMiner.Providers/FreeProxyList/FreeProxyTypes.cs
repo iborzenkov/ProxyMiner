@@ -7,5 +7,5 @@ internal enum FreeProxyTypes
 {
     Anonymous,
     Elite,
-    Transparent
+    Transparent,
 }

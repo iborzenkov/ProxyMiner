@@ -1,5 +1,3 @@
-// ReSharper disable InconsistentNaming
-
 using System.Collections.Concurrent;
 using ProxyMiner.Core.Models.BaseCollections;
 using ProxyMiner.Core.Producers;
@@ -99,7 +97,7 @@ public class ProducerCollectionTests : ProxyMinerTestsBase
         Miner.Producers.CollectionChanged += Producers_CollectionChanged_Add;
         try
         {
-            Miner.Producers.AddRange(new[] { producer1, null!, producer2, producer3, null! });
+            Miner.Producers.AddRange([producer1, null!, producer2, producer3, null!]);
             CollectionAssert.AreEquivalent(new[] { producer1, producer2, producer3 }, Miner.Producers.Items.ToArray());
         }
         finally
@@ -110,7 +108,7 @@ public class ProducerCollectionTests : ProxyMinerTestsBase
         Miner.Producers.CollectionChanged += Producers_CollectionChanged_Remove;
         try
         {
-            Miner.Producers.RemoveRange(new[] { producer1, producer3, null! });
+            Miner.Producers.RemoveRange([producer1, producer3, null!]);
             CollectionAssert.AreEquivalent(new[] { producer2 }, Miner.Producers.Items.ToArray());
         }
         finally
@@ -153,7 +151,7 @@ public class ProducerCollectionTests : ProxyMinerTestsBase
         Miner.Producers.Mined += Producers_Mined;
         try
         {
-            Miner.Producers.AddRange(new[] { producer1, producer2, producer3 });
+            Miner.Producers.AddRange([producer1, producer2, producer3]);
             StartMiner();
 
             CollectionAssert.AreEquivalent(new[] { producer1, producer2, producer3 }, miningProducers);
@@ -188,7 +186,7 @@ public class ProducerCollectionTests : ProxyMinerTestsBase
         Miner.Producers.Mined += Producers_Mined;
         try
         {
-            Miner.Producers.AddRange(new[] { MakeSimpleProducer() });
+            Miner.Producers.AddRange([MakeSimpleProducer()]);
             StartMiner();
 
             Assert.AreEqual(0, miningProducers.Count);
@@ -224,7 +222,7 @@ public class ProducerCollectionTests : ProxyMinerTestsBase
         Miner.Producers.Mined += Producers_Mined;
         try
         {
-            Miner.Producers.AddRange(new[] { producer });
+            Miner.Producers.AddRange([producer]);
             StartMiner();
 
             Assert.AreEqual(0, miningProducers.Count);
@@ -276,7 +274,7 @@ public class ProducerCollectionTests : ProxyMinerTestsBase
         Miner.Producers.Mined += Producers_Mined;
         try
         {
-            Miner.Producers.AddRange(new[] { producer });
+            Miner.Producers.AddRange([producer]);
             StartMiner();
             StopMiner();
 

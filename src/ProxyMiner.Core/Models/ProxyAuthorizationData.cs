@@ -5,6 +5,12 @@ namespace ProxyMiner.Core.Models;
 /// </summary>
 public sealed class ProxyAuthorizationData : IEquatable<ProxyAuthorizationData>
 {
+    /// <summary>
+    ///     Initializes a new instance of the ProxyAuthorizationData class.
+    /// </summary>
+    /// <param name="username">The username for proxy authentication.</param>
+    /// <param name="password">The password for proxy authentication. Can be null.</param>
+    /// <exception cref="ArgumentNullException">Thrown when username is null or whitespace.</exception>
     public ProxyAuthorizationData(string username, string? password)
     {
         if (string.IsNullOrWhiteSpace(username))
@@ -31,7 +37,7 @@ public sealed class ProxyAuthorizationData : IEquatable<ProxyAuthorizationData>
 
     public bool Equals(ProxyAuthorizationData? other)
     {
-        if (ReferenceEquals(null, other)) 
+        if (other is null) 
             return false;
         
         if (ReferenceEquals(this, other)) 

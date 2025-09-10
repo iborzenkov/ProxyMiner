@@ -1,5 +1,4 @@
-﻿using ProxyMiner.Core.Filters;
-using ProxyMiner.Core.Models.BaseCollections;
+﻿using ProxyMiner.Core.Models.BaseCollections;
 
 namespace ProxyMiner.Core.Models.ProxyCollections;
 

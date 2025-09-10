@@ -50,7 +50,7 @@ public sealed class Proxy : IEquatable<Proxy>
 
     public bool Equals(Proxy? other)
     {
-        if (ReferenceEquals(null, other)) 
+        if (other is null) 
             return false;
         
         if (ReferenceEquals(this, other)) 
@@ -95,7 +95,7 @@ public sealed class Proxy : IEquatable<Proxy>
                 : null;
         }
 
-        private bool IsHostCorrected(string host, out MakeProxyError? proxyError)
+        private static bool IsHostCorrected(string host, out MakeProxyError? proxyError)
         {
             proxyError = null;
 
@@ -111,7 +111,7 @@ public sealed class Proxy : IEquatable<Proxy>
             return proxyError == null;
         }
 
-        private bool IsPortCorrected(int port, out MakeProxyError? proxyError)
+        private static bool IsPortCorrected(int port, out MakeProxyError? proxyError)
         {
             proxyError = null;
             if (port is < 0 or > 65535)

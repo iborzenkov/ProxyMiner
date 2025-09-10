@@ -16,11 +16,8 @@ public static class MinerFactory
     /// <returns>Miner.</returns>
     public static IMiner GetMiner(IChecker checker, ISettingsProvider settingsProvider)
     {
-        if (checker == null)
-            throw new ArgumentNullException(nameof(checker));
-
-        if (settingsProvider == null)
-            throw new ArgumentNullException(nameof(settingsProvider));
+        ArgumentNullException.ThrowIfNull(checker);
+        ArgumentNullException.ThrowIfNull(settingsProvider);
 
         return new Miner(checker, settingsProvider);
     }

@@ -38,7 +38,7 @@ public class ProxyCheckerTest
         using var checkObserver = MoqFactory.CheckObserverBuilder.Build();
         proxyChecker.Subscribe(checkObserver);
 
-        proxyChecker.Add(new[] { Proxy1, Proxy2 });
+        proxyChecker.Add([Proxy1, Proxy2]);
         
         Assert.AreEqual(0, proxyChecker.FreeCheckSlot);
         Assert.IsFalse(proxyChecker.IsEnabled);
@@ -85,7 +85,7 @@ public class ProxyCheckerTest
         using var checkObserver = MoqFactory.CheckObserverBuilder.Build();
         proxyChecker.Subscribe(checkObserver);
 
-        proxyChecker.Add(new[] { Proxy1, Proxy2, Proxy3, Proxy4, Proxy5 });
+        proxyChecker.Add([Proxy1, Proxy2, Proxy3, Proxy4, Proxy5]);
         proxyChecker.Start();
         try
         {
@@ -112,7 +112,7 @@ public class ProxyCheckerTest
             Assert.IsTrue(proxyChecker.IsEnabled);
             Assert.AreEqual(3, proxyChecker.FreeCheckSlot);
 
-            proxyChecker.Add(new[] { Proxy1, Proxy2, Proxy3, Proxy4, Proxy5 });
+            proxyChecker.Add([Proxy1, Proxy2, Proxy3, Proxy4, Proxy5]);
             Thread.Sleep(1000);
             Assert.AreEqual(1, proxyChecker.FreeCheckSlot, "3 proxies in progress, 2 proxies in queue, 1 free slot in queue");
         }

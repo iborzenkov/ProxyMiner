@@ -4,5 +4,5 @@ internal enum GeoNodeProxyTypes
 {
     Anonymous,
     Elite,
-    Transparent
+    Transparent,
 }

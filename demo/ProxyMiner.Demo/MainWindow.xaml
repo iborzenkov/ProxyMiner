@@ -32,8 +32,8 @@
                           AutoGenerateColumns="False"
                           ItemsSource="{Binding Sources}">
                     <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Binding="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Header="Active?" />
-                        <DataGridTextColumn Binding="{Binding Name}" Header="Name" />
+                        <DataGridCheckBoxColumn Binding="{Binding Producer.IsEnabled, UpdateSourceTrigger=PropertyChanged}" Header="Active?" />
+                        <DataGridTextColumn Binding="{Binding Producer.Name}" Header="Name" />
                         <DataGridTextColumn Binding="{Binding StartTimeUtc}" Header="Last start date" />
                         <DataGridTextColumn Binding="{Binding FinishTimeUtc}" Header="Last finish date" />
                         <DataGridTextColumn Binding="{Binding DurationInSec, Mode=OneWay}" Header="Duration, sec" />

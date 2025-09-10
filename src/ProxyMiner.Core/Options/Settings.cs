@@ -87,7 +87,7 @@ public sealed class Settings
     {
         if (_groupingTransaction == null)
         {
-            Changed.Invoke(this, new SettingsChangedEventArgs(new[] { settingName }));
+            Changed.Invoke(this, new SettingsChangedEventArgs([settingName]));
         }
         else
         {
@@ -111,7 +111,7 @@ public sealed class Settings
         {
             _settings._groupingTransaction = null;
             
-            if (_isNeedChangeAllSettings || _applingSettingsName.Any())
+            if (_isNeedChangeAllSettings || _applingSettingsName.Count != 0)
             {
                 _settings.Changed.Invoke(this, new SettingsChangedEventArgs(_applingSettingsName));
             }
@@ -137,7 +137,7 @@ public sealed class Settings
         }
 
         private bool _isNeedChangeAllSettings;
-        private readonly HashSet<string> _applingSettingsName = new();
+        private readonly HashSet<string> _applingSettingsName = [];
         private readonly Settings _settings;
 
     }

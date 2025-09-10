@@ -69,7 +69,7 @@ public sealed record ProxyStatus
             return "Timeout";
 
         if (Status != HttpStatusCode.OK)
-            return Status.ToString();
+            return Status?.ToString() ?? "NULL";
 
         return IsAnonimous
             ? "Anonimous"

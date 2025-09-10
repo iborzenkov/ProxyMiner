@@ -52,7 +52,7 @@ public sealed class Producer
     /// </summary>
     public event EventHandler<EventArgs> EnabledChanged = (_, _) => { };
 
-    private string ValidateName(string name)
+    private static string ValidateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))    
             throw new ArgumentNullException(nameof(name));

@@ -7,5 +7,5 @@ public enum MakeProxyError
 {
     PortOutOfRange,
     HostIsNull,
-    HostIsNotCorrect
+    HostIsNotCorrect,
 }

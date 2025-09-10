@@ -10,6 +10,11 @@ namespace ProxyMiner.Providers.FreeProxyList;
 /// </summary>
 public sealed class FreeProxyListProvider : IProxyProvider
 {
+    /// <summary>
+    ///     Provides a list of proxies from https://free-proxy-list.net/
+    /// </summary>
+    /// <param name="token">The cancellation token to cancel the operation.</param>
+    /// <returns>Proxy list result containing Elite and Anonymous proxies.</returns>
     public Task<ProxyProviderResult> GetProxies(CancellationToken token)
     {
         return Task.Run(async () =>

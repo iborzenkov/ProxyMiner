@@ -12,7 +12,7 @@ public interface IBaseCollection<T>
     ///     Adds multiple items to the collection.
     /// </summary>
     /// <param name="items">Added items.</param>
-    void AddRange(IEnumerable<T> items);
+    void AddRange(IEnumerable<T?> items);
 
     /// <summary>
     ///     Removes one item from the collection.
@@ -24,7 +24,7 @@ public interface IBaseCollection<T>
     ///     Removes multiple items from the collection.
     /// </summary>
     /// <param name="items">Removing items.</param>
-    void RemoveRange(IEnumerable<T> items);
+    void RemoveRange(IEnumerable<T?> items);
 
     /// <summary>
     ///     Collection elements.

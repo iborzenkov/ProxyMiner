@@ -36,9 +36,8 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
 
     void ICheckerController.CheckNow(IEnumerable<Proxy> proxies)
     {
-        if (proxies == null)
-            throw new ArgumentNullException(nameof(proxies));
-        
+        ArgumentNullException.ThrowIfNull(proxies);
+
         lock (_locker)
         {
             var collection = proxies.ToList();
@@ -50,8 +49,7 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
 
     void ICheckerController.StopChecking(IEnumerable<Proxy> proxies)
     {
-        if (proxies == null)
-            throw new ArgumentNullException(nameof(proxies));
+        ArgumentNullException.ThrowIfNull(proxies);
 
         lock (_locker)
         {
@@ -73,16 +71,14 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
 
     void ICheckObserver.Checking(ProxyCheckingEventArgs args)
     {
-        if (args == null)
-            throw new ArgumentNullException(nameof(args));
+        ArgumentNullException.ThrowIfNull(args);
 
         Checking.Invoke(this, args);
     }
 
     void ICheckObserver.Checked(ProxyCheckedEventArgs args)
     {
-        if (args == null)
-            throw new ArgumentNullException(nameof(args));
+        ArgumentNullException.ThrowIfNull(args);
 
         _inProgress.TryRemove(args.StateOfProxy.Proxy, out _);
         Checked.Invoke(this, args);
@@ -94,15 +90,16 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
             return;
 
         var proxies = _filter.Apply(
-            Filter.Builder
+            modifier => modifier
                 .Count(_checker.FreeCheckSlot)
                 .Except(_inProgress.Keys.Concat(_blocked))
                 .Include(_highPriority)
                 .StateNotExpired(_settings.ExpiredProxyActualState)
                 .SortedBy(SortingField.LastCheck, SortDirection.Asceding)
-                .Build()).ToList();
+                .Build())
+            .ToList();
 
-        if (_highPriority.Any())
+        if (_highPriority.Count != 0)
         {
             proxies.ForEach(proxy => _highPriority.Remove(proxy));
         }
@@ -124,8 +121,8 @@ internal sealed class ProxyCheckerController : ICheckerController, ICheckObserve
     private readonly IProxyFilter _filter;
     private readonly Timer _timer;
     private readonly ConcurrentDictionary<Proxy,bool> _inProgress = new();
-    private readonly List<Proxy> _highPriority = new();
-    private readonly List<Proxy> _blocked = new();
+    private readonly List<Proxy> _highPriority = [];
+    private readonly List<Proxy> _blocked = [];
     private readonly object _locker = new();
 
     private const int TimerIntervalMilliseconds = 3000;

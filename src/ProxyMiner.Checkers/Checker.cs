@@ -17,6 +17,12 @@ namespace ProxyMiner.Checkers;
 /// </summary>
 public sealed class Checker : IChecker
 {
+    /// <summary>
+    ///     Checks the proxy server for validity and anonymity.
+    /// </summary>
+    /// <param name="proxy">The proxy server to check.</param>
+    /// <param name="token">The cancellation token to cancel the operation.</param>
+    /// <returns>The proxy status indicating whether the proxy is working and if it's anonymous.</returns>
     public Task<ProxyStatus> Check(Proxy proxy, CancellationToken token)
     {
         return Task.Run(async () =>
@@ -110,7 +116,7 @@ public sealed class Checker : IChecker
         }
     }
 
-    private static ICredentials? GetCredentials(Proxy proxy)
+    private static NetworkCredential? GetCredentials(Proxy proxy)
     {
         return proxy.AuthorizationData == null
             ? null

@@ -9,15 +9,13 @@ internal sealed class FilterApplier
 {
     internal FilterApplier(IEnumerable<StateOfProxy> proxyStates)
     {
-        _proxyStates = proxyStates.ToHashSet() 
-            ?? throw new ArgumentNullException(nameof(proxyStates));
+        _proxyStates = proxyStates.ToHashSet() ?? throw new ArgumentNullException(nameof(proxyStates));
     }
     
     public List<Proxy> Apply(Filter filter)
     {
-        if (filter == null)
-            throw new ArgumentNullException(nameof(filter));
-        
+        ArgumentNullException.ThrowIfNull(filter);
+
         var allProxies = _proxyStates.ToList();
         var withoutExcluded = allProxies.Except(
             _proxyStates.Where(ps => filter.ExcludedProxies.Contains(ps.Proxy))).ToList();
@@ -33,7 +31,7 @@ internal sealed class FilterApplier
             : proxies.Take(filter.Count ?? proxies.Count).ToList();
     }
     
-    private List<StateOfProxy> SortIfNeed(List<StateOfProxy> proxies, ProxySort? sort)
+    private static List<StateOfProxy> SortIfNeed(List<StateOfProxy> proxies, ProxySort? sort)
     {
         if (sort != null)
         {
@@ -43,7 +41,7 @@ internal sealed class FilterApplier
         return proxies;
     }
 
-    private List<StateOfProxy> GetProxiesWithNotActualStates(List<StateOfProxy> proxies, TimeSpan? expiredState)
+    private static List<StateOfProxy> GetProxiesWithNotActualStates(List<StateOfProxy> proxies, TimeSpan? expiredState)
     {
         if (expiredState == null)
             return proxies;
@@ -67,7 +65,7 @@ internal sealed class FilterApplier
         return result;
     }
     
-    private List<StateOfProxy> GetValidProxies(List<StateOfProxy> proxies, bool? isValid)
+    private static List<StateOfProxy> GetValidProxies(List<StateOfProxy> proxies, bool? isValid)
     {
         if (isValid == null)
             return proxies;
@@ -86,7 +84,7 @@ internal sealed class FilterApplier
         return result;
     }
     
-    private List<StateOfProxy> GetAnonimousProxies(List<StateOfProxy> proxies, bool? isAnonimous)
+    private static List<StateOfProxy> GetAnonimousProxies(List<StateOfProxy> proxies, bool? isAnonimous)
     {
         if (isAnonimous == null)
             return proxies;

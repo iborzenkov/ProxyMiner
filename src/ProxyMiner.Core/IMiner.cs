@@ -5,6 +5,9 @@ using ProxyMiner.Core.Producers;
 
 namespace ProxyMiner.Core;
 
+/// <summary>
+///     Main interface for proxy mining operations.
+/// </summary>
 public interface IMiner : IDisposable
 {
     /// <summary>

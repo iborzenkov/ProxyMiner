@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using ProxyMiner.Core.Filters;
 using ProxyMiner.Core.Models.BaseCollections;
 
 namespace ProxyMiner.Core.Models.ProxyCollections;
@@ -8,16 +7,14 @@ internal sealed class ProxyCollection : IProxyCollection
 {
     public void Add(Proxy proxy)
     {
-        if (proxy == null)
-            throw new ArgumentNullException(nameof(proxy));
-        
-        AddRange(new[] { proxy });
+        ArgumentNullException.ThrowIfNull(proxy);
+
+        AddRange([proxy]);
     }
 
-    public void AddRange(IEnumerable<Proxy> proxies)
+    public void AddRange(IEnumerable<Proxy?> proxies)
     {
-        if (proxies == null)
-            throw new ArgumentNullException(nameof(proxies));
+        ArgumentNullException.ThrowIfNull(proxies);
 
         var addedItems = new List<Proxy>();
         foreach (var proxy in proxies.Where(proxy => proxy != null).ToList())
@@ -28,7 +25,7 @@ internal sealed class ProxyCollection : IProxyCollection
             }
         }
 
-        if (addedItems.Any())
+        if (addedItems.Count != 0)
         {
             OnCollectionChanged(CollectionChangedEventArgs<Proxy>.AddEventArgs(addedItems));
         }
@@ -36,21 +33,18 @@ internal sealed class ProxyCollection : IProxyCollection
 
     public void Remove(Proxy proxy)
     {
-        if (proxy == null)
-            throw new ArgumentNullException(nameof(proxy));
+        ArgumentNullException.ThrowIfNull(proxy);
 
-        RemoveRange(new[] { proxy });
+        RemoveRange([proxy]);
     }
 
-    public void RemoveRange(IEnumerable<Proxy> proxies)
+    public void RemoveRange(IEnumerable<Proxy?> proxies)
     {
-        if (proxies == null)
-            throw new ArgumentNullException(nameof(proxies));
+        ArgumentNullException.ThrowIfNull(proxies);
 
-        var removedItems = proxies.Where(proxy => 
-            proxy != null && _items.TryRemove(proxy, out _)).ToList();
+        var removedItems = proxies.Where(proxy => proxy != null && _items.TryRemove(proxy, out _)).ToList();
 
-        if (removedItems.Any())
+        if (removedItems.Count != 0)
         {
             OnCollectionChanged(CollectionChangedEventArgs<Proxy>.RemoveEventArgs(removedItems));
         }

@@ -8,12 +8,22 @@ namespace ProxyMiner.Providers.CsvFile;
 /// </summary>
 public sealed class CsvFileProvider : IProxyProvider
 {
+    /// <summary>
+    ///     Initializes a new instance of the CsvFileProvider class.
+    /// </summary>
+    /// <param name="filename">The path to the CSV file containing proxy data.</param>
+    /// <param name="settings">The settings for parsing the CSV file.</param>
     public CsvFileProvider(string filename, CsvFileSettings settings)
     {
         _filename = filename;
         _settings = settings;
     }
 
+    /// <summary>
+    ///     Retrieves proxies from the specified CSV file.
+    /// </summary>
+    /// <param name="token">The cancellation token to cancel the operation.</param>
+    /// <returns>Proxy provider result containing proxies parsed from the CSV file.</returns>
     public Task<ProxyProviderResult> GetProxies(CancellationToken token)
     {
         return File.Exists(_filename)

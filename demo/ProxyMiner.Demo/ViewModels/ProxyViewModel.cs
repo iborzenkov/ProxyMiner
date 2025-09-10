@@ -1,122 +1,127 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using ProxyMiner.Core;
+using Kaspirin.UI.Framework.Threading;
 using ProxyMiner.Core.Checkers;
 using ProxyMiner.Core.Models;
 
-namespace ProxyMiner.Demo.ViewModels
+namespace ProxyMiner.Demo.ViewModels;
+
+public sealed class ProxyViewModel : INotifyPropertyChanged, IDisposable
 {
-    public sealed class ProxyViewModel : INotifyPropertyChanged, IDisposable
+    public ProxyViewModel(Proxy proxy, ICheckerController checker)
     {
-        public ProxyViewModel(Proxy proxy, ICheckerController checker)
-        {
-            Proxy = proxy;
+        Proxy = proxy;
 
-            _checker = checker;
-            _checker.Checking += ProxyChecking;
-            _checker.Checked += ProxyChecked;
+        _checker = checker;
+        _checker.Checking += ProxyChecking;
+        _checker.Checked += ProxyChecked;
+    }
+
+    public void Dispose()
+    {
+        _checker.Checking -= ProxyChecking;
+        _checker.Checked -= ProxyChecked;
+    }
+
+    public string Name => $"{Proxy.Host}:{Proxy.Port}";
+
+    public string Type => Proxy.Type.ToString();
+    public string Host => Proxy.Host;
+    public int Port => Proxy.Port;
+    public string? Username => Proxy.AuthorizationData?.Username;
+    public string? Password => Proxy.AuthorizationData?.Password;
+    public string? Status
+    {
+        get => _status;
+        private set
+        {
+            _status = value;
+            OnChanged();
         }
-
-        public void Dispose()
+    }
+    public bool? IsValid { get; private set; }
+    public bool? IsAnonimous { get; private set; }
+    
+    public DateTime? StartCheckUtc
+    {
+        get => _startCheckUtc;
+        private set
         {
-            _checker.Checking -= ProxyChecking;
-            _checker.Checked -= ProxyChecked;
+            _startCheckUtc = value;
+            
+            OnChanged();
+            OnChanged(nameof(DurationInSec));
         }
+    }
 
-        public string Name => $"{Proxy.Host}:{Proxy.Port}";
-
-        public string Type => Proxy.Type.ToString();
-        public string Host => Proxy.Host;
-        public int Port => Proxy.Port;
-        public string? Username => Proxy.AuthorizationData?.Username;
-        public string? Password => Proxy.AuthorizationData?.Password;
-        public string? Status
+    public DateTime? FinishCheckUtc
+    {
+        get => _finishCheckUtc;
+        private set
         {
-            get => _status;
-            private set
-            {
-                _status = value;
-                OnChanged();
-            }
+            _finishCheckUtc = value;
+            
+            OnChanged();
+            OnChanged(nameof(DurationInSec));
         }
-        public bool? IsValid { get; private set; }
-        public bool? IsAnonimous { get; private set; }
-        
-        public DateTime? StartCheckUtc
+    }
+
+    public double? DurationInSec
+    {
+        get
         {
-            get => _startCheckUtc;
-            private set
-            {
-                _startCheckUtc = value;
-                
-                OnChanged();
-                OnChanged(nameof(DurationInSec));
-            }
+            return (StartCheckUtc == null || FinishCheckUtc == null) 
+                ? null
+                : (FinishCheckUtc - StartCheckUtc).Value.TotalSeconds;
         }
+    }
 
-        public DateTime? FinishCheckUtc
-        {
-            get => _finishCheckUtc;
-            private set
-            {
-                _finishCheckUtc = value;
-                
-                OnChanged();
-                OnChanged(nameof(DurationInSec));
-            }
-        }
+    public Proxy Proxy { get; }
 
-        public double? DurationInSec
-        {
-            get
-            {
-                return (StartCheckUtc == null || FinishCheckUtc == null) 
-                    ? null
-                    : (FinishCheckUtc - StartCheckUtc).Value.TotalSeconds;
-            }
-        }
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-        public Proxy Proxy { get; }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        private void ProxyChecking(object? sender, ProxyCheckingEventArgs args)
-        {
-            if (args.Proxy.Equals(Proxy))
+    private void ProxyChecking(object? sender, ProxyCheckingEventArgs args)
+    {
+        if (args.Proxy.Equals(Proxy))
+        { 
+            Executers.InUiAsync(() =>
             {
                 StartCheckUtc = args.StartTimeUtc;
                 FinishCheckUtc = null;
                 SetStatus(null);
-            }
+            });
         }
+    }
 
-        private void ProxyChecked(object? sender, ProxyCheckedEventArgs args)
+    private void ProxyChecked(object? sender, ProxyCheckedEventArgs args)
+    {
+        if (args.StateOfProxy.Proxy.Equals(Proxy))
         {
-            if (args.StateOfProxy.Proxy.Equals(Proxy))
+            Executers.InUiAsync(() =>
             {
                 SetStatus(args.StateOfProxy.State.Status);
                 StartCheckUtc = args.StateOfProxy.State.StartTimeUtc;
                 FinishCheckUtc = args.StateOfProxy.State.FinishTimeUtc;
-            }
+            });
         }
-
-        private void SetStatus(ProxyStatus? status)
-        {
-            Status = status?.ToString();
-            IsValid = status?.IsValid ?? false;
-            IsAnonimous = status?.IsAnonimous ?? false;
-        }
-
-        private void OnChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private readonly ICheckerController _checker;
- 
-        private string? _status;
-        private DateTime? _startCheckUtc;
-        private DateTime? _finishCheckUtc;
     }
+
+    private void SetStatus(ProxyStatus? status)
+    {
+        Status = status?.ToString();
+        IsValid = status?.IsValid ?? false;
+        IsAnonimous = status?.IsAnonimous ?? false;
+    }
+
+    private void OnChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private readonly ICheckerController _checker;
+
+    private string? _status;
+    private DateTime? _startCheckUtc;
+    private DateTime? _finishCheckUtc;
 }

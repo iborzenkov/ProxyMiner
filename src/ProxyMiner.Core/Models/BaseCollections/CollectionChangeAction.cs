@@ -6,5 +6,5 @@
 public enum CollectionChangeAction
 {
     Add,
-    Remove
+    Remove,
 }

@@ -17,11 +17,12 @@ internal sealed class ProxyFilter : IProxyFilter, ICheckObserver
         _checker.Subscribe(this);
     }
 
-    IEnumerable<Proxy> IProxyFilter.Apply(Filter filter)
+    IEnumerable<Proxy> IProxyFilter.Apply(Action<FilterBuilder> modifier)
     {
-        if (filter == null)
-            throw new ArgumentNullException(nameof(filter));
-
+        var builder = new FilterBuilder();
+        modifier.Invoke(builder);
+        var filter = builder.Build();
+        
         var applier = new FilterApplier(_proxiesStates.Values);
         return applier.Apply(filter);
     }
@@ -32,8 +33,7 @@ internal sealed class ProxyFilter : IProxyFilter, ICheckObserver
 
     void ICheckObserver.Checking(ProxyCheckingEventArgs args)
     {
-        if (args == null)
-            throw new ArgumentNullException(nameof(args));
+        ArgumentNullException.ThrowIfNull(args);
 
         SetProxyState(new StateOfProxy(
             args.Proxy, ProxyState.StartChecking(args.StartTimeUtc)));
@@ -41,16 +41,14 @@ internal sealed class ProxyFilter : IProxyFilter, ICheckObserver
 
     void ICheckObserver.Checked(ProxyCheckedEventArgs args)
     {
-        if (args == null)
-            throw new ArgumentNullException(nameof(args));
+        ArgumentNullException.ThrowIfNull(args);
 
         SetProxyState(args.StateOfProxy);
     }
 
     private void SetProxyState(StateOfProxy proxyState)
     {
-        if (proxyState == null)
-            throw new ArgumentNullException(nameof(proxyState));
+        ArgumentNullException.ThrowIfNull(proxyState);
 
         // todo: here you can add an item to the collection that was previously deleted by another thread
         if (_proxiesStates.ContainsKey(proxyState.Proxy))

@@ -13,16 +13,14 @@ internal sealed class ProducerCollection : IProducerCollection
 
     public void Add(Producer producer)
     {
-        if (producer == null)
-            throw new ArgumentNullException(nameof(producer));
-        
-        AddRange(new[] { producer });
+        ArgumentNullException.ThrowIfNull(producer);
+
+        AddRange([producer]);
     }
 
-    public void AddRange(IEnumerable<Producer> producers)
+    public void AddRange(IEnumerable<Producer?> producers)
     {
-        if (producers == null)
-            throw new ArgumentNullException(nameof(producers));
+        ArgumentNullException.ThrowIfNull(producers);
 
         var addedItems = new List<Producer>();
         foreach (var producer in producers.Where(p => p != null).ToList())
@@ -40,7 +38,7 @@ internal sealed class ProducerCollection : IProducerCollection
             }
         }
 
-        if (addedItems.Any())
+        if (addedItems.Count != 0)
         {
             OnCollectionChanged(CollectionChangedEventArgs<Producer>.AddEventArgs(addedItems));
         }
@@ -54,16 +52,14 @@ internal sealed class ProducerCollection : IProducerCollection
 
     public void Remove(Producer producer)
     {
-        if (producer == null)
-            throw new ArgumentNullException(nameof(producer));
-        
-        RemoveRange(new[] { producer });
+        ArgumentNullException.ThrowIfNull(producer);
+
+        RemoveRange([producer]);
     }
 
-    public void RemoveRange(IEnumerable<Producer> producers)
+    public void RemoveRange(IEnumerable<Producer?> producers)
     {
-        if (producers == null)
-            throw new ArgumentNullException(nameof(producers));
+        ArgumentNullException.ThrowIfNull(producers);
 
         var removedItems = new List<Producer>();
         foreach (var producer in producers.Where(p => p != null))
@@ -79,7 +75,7 @@ internal sealed class ProducerCollection : IProducerCollection
             removedItems.Add(producer);
         }
 
-        if (removedItems.Any())
+        if (removedItems.Count != 0)
         {
             OnCollectionChanged(CollectionChangedEventArgs<Producer>.RemoveEventArgs(removedItems));
         }

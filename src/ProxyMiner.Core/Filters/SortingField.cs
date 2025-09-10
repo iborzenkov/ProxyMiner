@@ -5,5 +5,5 @@
 /// </summary>
 public enum SortingField
 {
-    LastCheck
+    LastCheck,
 }

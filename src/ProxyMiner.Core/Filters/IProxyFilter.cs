@@ -7,7 +7,7 @@ public interface IProxyFilter
     /// <summary>
     ///     Getting the proxies from the collection by the specified filter.
     /// </summary>
-    /// <param name="filter">Filter.</param>
+    /// <param name="modifier">Filter.</param>
     /// <returns>Filtered proxy collection.</returns>
-    IEnumerable<Proxy> Apply(Filter filter);
+    IEnumerable<Proxy> Apply(Action<FilterBuilder> modifier);
 }

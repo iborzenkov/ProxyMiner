@@ -99,9 +99,8 @@ internal sealed class ProxyChecker : IDisposable
 
     internal void Add(IEnumerable<Proxy> proxies)
     {
-        if (proxies == null)
-            throw new ArgumentNullException(nameof(proxies));
-        
+        ArgumentNullException.ThrowIfNull(proxies);
+
         if (!IsEnabled)
             return;
 
@@ -120,16 +119,14 @@ internal sealed class ProxyChecker : IDisposable
 
     internal void Subscribe(ICheckObserver observer)
     {
-        if (observer == null)
-            throw new ArgumentNullException(nameof(observer));
-        
+        ArgumentNullException.ThrowIfNull(observer);
+
         _observers.Add(observer);
     }
 
     internal void Unsubscribe(ICheckObserver observer)
     {
-        if (observer == null)
-            throw new ArgumentNullException(nameof(observer));
+        ArgumentNullException.ThrowIfNull(observer);
 
         _observers.Remove(observer);
     }
@@ -141,5 +138,5 @@ internal sealed class ProxyChecker : IDisposable
     private readonly Settings _settings;
     private readonly IChecker _checker;
     
-    private readonly List<ICheckObserver> _observers = new();
+    private readonly List<ICheckObserver> _observers = [];
 }

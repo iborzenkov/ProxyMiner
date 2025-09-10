@@ -9,6 +9,11 @@ namespace ProxyMiner.Providers.GeoNode;
 /// </summary>
 public sealed class GeoNodeProvider : IProxyProvider
 {
+    /// <summary>
+    ///     Retrieves proxies from proxylist.geonode.com API.
+    /// </summary>
+    /// <param name="token">The cancellation token to cancel the operation.</param>
+    /// <returns>Proxy provider result containing Elite and Anonymous proxies from GeoNode.</returns>
     public Task<ProxyProviderResult> GetProxies(CancellationToken token)
     {
         return Task.Run(async () =>
@@ -16,6 +21,7 @@ public sealed class GeoNodeProvider : IProxyProvider
                 var proxies = new List<ProxyDto>();
 
                 var page = 1;
+                var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 do
                 {
                     token.ThrowIfCancellationRequested();
@@ -23,9 +29,7 @@ public sealed class GeoNodeProvider : IProxyProvider
                     var pageUrl = _url.Replace("%page%", page.ToString());
                     var html = await LoadContent(pageUrl, token);
 
-                    var data = JsonSerializer.Deserialize<PageDto>(
-                        html,
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    var data = JsonSerializer.Deserialize<PageDto>(html, jsonOptions);
                     if (data?.Data == null || data.Total == null)
                         break;
 
@@ -46,7 +50,7 @@ public sealed class GeoNodeProvider : IProxyProvider
                     .Where(proxy => proxy != null)
                     .Select(proxy => proxy!));
 
-                async Task<string> LoadContent(string url, CancellationToken ct)
+                static async Task<string> LoadContent(string url, CancellationToken ct)
                 {
                     using var client = new HttpClient();
                     return await client.GetStringAsync(url, ct);

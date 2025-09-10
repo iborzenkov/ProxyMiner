@@ -7,5 +7,5 @@ public enum ProxyProviderResultCode
     Timeout,
     Cancelled,
     Error,
-    Custom
+    Custom,
 }

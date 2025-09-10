@@ -45,8 +45,7 @@ public sealed class ProxyProviderResult
     /// <param name="exception">The exception that occurred.</param>
     public static ProxyProviderResult Error(Exception exception)
     {
-        if (exception == null)
-            throw new ArgumentNullException(nameof(exception));
+        ArgumentNullException.ThrowIfNull(exception);
 
         return new ProxyProviderResult
         {
@@ -79,7 +78,7 @@ public sealed class ProxyProviderResult
     /// <summary>
     ///     Proxy collection.
     /// </summary>
-    public IEnumerable<Proxy> Proxies { get; private init; } = Enumerable.Empty<Proxy>();
+    public IEnumerable<Proxy> Proxies { get; private init; } = [];
 
     /// <summary>
     ///     Error, if any, when receiving the result.
